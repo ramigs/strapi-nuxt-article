@@ -1,5 +1,8 @@
 # Strapi Authentication in a Nuxt.js App
 
+Implementing Strapi Authentication and Authorization in a Nuxt.js SSR project,
+using @nuxtjs/auth.
+
 In this tutorial I'll be showing you how I built a Vue.js app with
 Authentication using Cosmic JS and AWS Lambda prior to deploying to Netlify.
 
@@ -132,7 +135,19 @@ you just started running."
 API_AUTH_URL=http://localhost:1337
 ```
 
-Enable vuex store by creating `store/index.js`.
+Enable vuex store by creating `store/index.js`:
+
+```javascript
+export const getters = {
+  isAuthenticated(state) {
+    return state.auth.loggedIn;
+  },
+
+  loggedInUser(state) {
+    return state.auth.user;
+  },
+};
+```
 
 Now, install also the required
 Nuxt Auth module dependency:
@@ -317,7 +332,7 @@ export default {
 </script>
 ```
 
-## Home
+## Homepage
 
 "Also, let’s update the homepage. Open pages/index.vue and replace its content
 with the following:"
@@ -334,11 +349,252 @@ with the following:"
 
 This is what we have so far:
 
+## Notification Component
+
+If there is an error, the error message is displayed by a Notification
+component, which we’ll create shortly.
+
+Before we test the user registration out, let’s create the Notification
+component. Create a new Notification.vue file inside components and paste the
+code below in it:
+
+```vue
+<template>
+  <div class="notification is-danger">
+    {{ message }}
+  </div>
+</template>
+
+<script>
+export default {
+  name: "Notification",
+  props: ["message"],
+};
+</script>
+```
+
 ## Register
 
-- Confirm Email
+Inside the pages directory, create a new register.vue file and paste the code below in it:
+
+```vue
+<template>
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-4 is-offset-4">
+          <h2 class="title has-text-centered">Register User</h2>
+
+          <Notification v-if="success" type="success" :message="success" />
+          <Notification v-if="error" type="danger" :message="error" />
+
+          <form v-if="!success" method="post" @submit.prevent="register">
+            <div class="field">
+              <label class="label">Username</label>
+              <div class="control">
+                <input
+                  v-model="username"
+                  type="text"
+                  class="input"
+                  name="username"
+                  required
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Email</label>
+              <div class="control">
+                <input
+                  v-model="email"
+                  type="email"
+                  class="input"
+                  name="email"
+                  required
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Password</label>
+              <div class="control">
+                <input
+                  v-model="password"
+                  type="password"
+                  class="input"
+                  name="password"
+                  required
+                />
+              </div>
+            </div>
+            <div class="control">
+              <button type="submit" class="button is-dark is-fullwidth">
+                Register
+              </button>
+            </div>
+          </form>
+
+          <div class="has-text-centered" style="margin-top: 20px">
+            Already got an account? <nuxt-link to="/login">Login</nuxt-link>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script>
+import Notification from "~/components/Notification";
+
+export default {
+  components: {
+    Notification,
+  },
+
+  data() {
+    return {
+      username: "",
+      email: "",
+      password: "",
+      success: null,
+      error: null,
+    };
+  },
+
+  methods: {
+    async register() {
+      try {
+        this.$axios.setToken(false);
+        await this.$axios.post("auth/local/register", {
+          username: this.username,
+          email: this.email,
+          password: this.password,
+        });
+        this.success = `A confirmation link has been sent to your email account. \
+        Please click on the link to confirm your email to complete the registration process.`;
+      } catch (e) {
+        this.error = e.response.data.message[0].messages[0].message;
+      }
+    },
+  },
+};
+</script>
+```
+
+"This contains a form with three fields: username, email, and password. Each
+field is bound to a corresponding data on the component. When the form is
+submitted, a register method will be called. Using the Axios module, we make a
+post request to the /register endpoint, passing along the user data. If the
+registration was successful, we make use of the Auth module’s loginWith(), using
+the local strategy and passing the user data to log the user in. Then we
+redirect the user to the homepage. If there is an error during the registration,
+we set the error data as the error message gotten from the API response.
+
+If there is an error, the error message is displayed by a Notification
+component, which we’ll create shortly."
+
+### Confirm Email
+
+Switch to console where Strapi is running and copy the link to the browser and visit.
+
+This will change confirm the user.
 
 ## Login
+
+"Now let’s allow returning users ability to log in. Create a new login.vue file
+inside the pages directory and paste the code below in it:"
+
+```vue
+<template>
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-4 is-offset-4">
+          <h2 class="title has-text-centered">Log In</h2>
+
+          <Notification v-if="error" type="danger" :message="error" />
+
+          <form method="post" @submit.prevent="login">
+            <div class="field">
+              <label class="label">Email</label>
+              <div class="control">
+                <input
+                  v-model="email"
+                  type="email"
+                  class="input"
+                  name="email"
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Password</label>
+              <div class="control">
+                <input
+                  v-model="password"
+                  type="password"
+                  class="input"
+                  name="password"
+                />
+              </div>
+            </div>
+            <div class="control">
+              <button type="submit" class="button is-dark is-fullwidth">
+                Log In
+              </button>
+            </div>
+          </form>
+          <div class="has-text-centered" style="margin-top: 20px">
+            <p>
+              Don't have an account?
+              <nuxt-link to="/register">Register</nuxt-link>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script>
+import Notification from "~/components/Notification";
+
+export default {
+  components: {
+    Notification,
+  },
+
+  data() {
+    return {
+      email: "",
+      password: "",
+      error: null,
+    };
+  },
+
+  methods: {
+    async login() {
+      try {
+        await this.$auth.loginWith("local", {
+          data: {
+            identifier: this.email,
+            password: this.password,
+          },
+        });
+        this.$router.push("/");
+      } catch (e) {
+        this.error = e.response.data.message[0].messages[0].message;
+      }
+    },
+  },
+};
+</script>
+```
+
+"This is quite similar to the register page. The form contains two fields: email
+and password. When the form is submitted, a login method will be called. Using
+the Auth module loginWith() and passing along the user data, we log the user in.
+If the authentication was successful, we redirect the user to the homepage.
+Otherwise set error to the error message gotten from the API response. Again, we
+are using the Notification component from earlier on to display the error
+message."
 
 ## User Profile
 
