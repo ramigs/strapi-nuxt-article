@@ -1,5 +1,8 @@
 # Strapi Authentication in a Nuxt.js App
 
+In this tutorial I'll be showing you how I built a Vue.js app with
+Authentication using Cosmic JS and AWS Lambda prior to deploying to Netlify.
+
 is going to walk you through on how to implement Strapi
 authentication in a Nuxt.js app.
 
@@ -14,12 +17,9 @@ adapting it to Strapi and adding the following:
 - Refresh token strategy
 - Password recovery
 
-Tailwind (because I've been wanting to
-learn it for quite some time now :) also checkout the new nuxt/tailwind module.
-https://www.npmjs.com/package/@nuxtjs/tailwindcss
-
 ## Pre-requisites
 
+You will be required to have Node JS and npm before starting. Make sure you already have them installed. If not you can find them here: https://nodejs.org
 Before we move on, I’d like to mention that although not mandatory, a working
 knowledge of the following technologies is beneficial:
 
@@ -31,7 +31,7 @@ Before you begin, you'll need:
 Strapi 3.0.1
 Nuxt.js v2.12.2
 
-Let's begin!
+Let's get started!
 
 ## Installing Strapi
 
@@ -117,13 +117,16 @@ npx create-nuxt-app nuxt-auth
 Go through the guide and make sure to select the following options:
 
 - axios and dotenv in the **Nuxt.js modules** step
-- Tailwind CSS in the **UI framework** step, which we'll use to style our app
+- Bulma CSS in the **UI framework** step, which we'll use to style our app
 
 ![Create Nuxt app](./create-nuxt-app-options.png)
 
 Once the tool finishes creating our Nuxt app,
 
 Let's edit the .env file and add an environment variable for Strapi's API URL:
+"Next, you'll need to make sure you have a .env file in your root project
+directory to change the VUE_APP_API_HOST variable to point to the lambda server
+you just started running."
 
 ```
 API_AUTH_URL=http://localhost:1337
@@ -143,6 +146,8 @@ Edit `nuxt.config.js` adding the module we've just installed:
 
 ```javascript
 modules: [
+  // Doc: https://github.com/nuxt-community/modules/tree/master/packages/bulma
+  '@nuxtjs/bulma',
   // Doc: https://axios.nuxtjs.org/usage
   '@nuxtjs/axios',
   // Doc: https://github.com/nuxt-community/dotenv-module
@@ -157,38 +162,177 @@ In the top of nuxt.config.js require and configure dotenv:
 require("dotenv").config();
 ```
 
-"Next, we need to set up the modules. Paste the code below into `nuxt.config.js`:"
+"axios. Paste the code below into `nuxt.config.js`:"
 
 ```javascript
-/*
- ** Auth Module configuration
- ** See https://auth.nuxtjs.org/api/options.html
-*/
-auth: {
-  strategies: {
-    local: {
-      endpoints: {
-        login: {
-          url: `${process.env.API_AUTH_URL}/auth/local`,
-          method: 'post',
-          propertyName: 'jwt'
-        },
-        user: {
-          url: `${process.env.API_AUTH_URL}/users/me`,
-          method: 'get',
-          propertyName: false
-        },
-        logout: false
-      },
-      autoFetchUser: true
-    }
-  }
+axios: {
+  baseURL: process.env.API_AUTH_URL
 },
 ```
 
 ## Configuring Nuxt Auth
 
-## Creating Navbar
+"Next, we need to set up the modules. Paste the code below into `nuxt.config.js`:"
+
+```javascript
+/*
+ ** Auth module configuration
+ ** See https://auth.nuxtjs.org/schemes/local.html#options
+ */
+auth: {
+  strategies: {
+    local: {
+      endpoints: {
+        login: {
+          url: 'auth/local',
+          method: 'post',
+          propertyName: 'jwt'
+        },
+        user: {
+          url: 'users/me',
+          method: 'get',
+          propertyName: false
+        },
+        logout: false
+      }
+    }
+  }
+},
+```
+
+"Here, we set the base URL (which is that of our API from earlier on) that Axios
+will use when making requests. Then we define the authentication endpoints for
+the local strategy corresponding to those on our API. On successful
+authentication, the token will be available in the response as a token object
+inside a data object, hence why we set propertyName to data.token. Similarly,
+the response from the /me endpoint will be inside a data object. Lastly, we set
+logout to false since our API doesn’t have an endpoint for logout. We’ll just
+remove the token from localstorage when a user logs out."
+
+## Navbar Component
+
+`Navbar.vue` and replace it content with the following:
+
+```vue
+<template>
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <nuxt-link class="navbar-item" to="/">Home</nuxt-link>
+
+      <a
+        role="button"
+        class="navbar-burger burger"
+        aria-label="menu"
+        aria-expanded="false"
+        data-target="navbarBasicExample"
+      >
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+
+    <div id="navbarBasicExample" class="navbar-menu">
+      <!--       <div class="navbar-start">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">
+            My Account
+          </a>
+
+          <div class="navbar-dropdown">
+            <nuxt-link class="navbar-item" to="/profile">My Profile</nuxt-link>
+            <hr class="navbar-divider" />
+            <a class="navbar-item">Logout</a>
+          </div>
+        </div>
+      </div> -->
+
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <div class="buttons">
+            <nuxt-link class="button is-primary" to="/register">
+              <strong>Register</strong>
+            </nuxt-link>
+            <nuxt-link class="button is-light" to="/login">
+              Log in
+            </nuxt-link>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</template>
+
+<script>
+export default {
+  mounted() {
+    // Get all "navbar-burger" elements
+    const $navbarBurgers = Array.prototype.slice.call(
+      document.querySelectorAll(".navbar-burger"),
+      0
+    );
+    // Check if there are any navbar burgers
+    if ($navbarBurgers.length > 0) {
+      // Add a click event on each of them
+      $navbarBurgers.forEach((el) => {
+        el.addEventListener("click", () => {
+          // Get the target from the "data-target" attribute
+          const target = el.dataset.target;
+          const $target = document.getElementById(target);
+          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+          el.classList.toggle("is-active");
+          $target.classList.toggle("is-active");
+        });
+      });
+    }
+  },
+};
+</script>
+```
+
+"The Navbar component contains links to login or register, links to view profile
+or logout."
+
+## Default Layout
+
+"Next, let’s update the default layout to make use of the Navbar component. Open
+layouts/default.vue and replace its content with the following:"
+
+```vue
+<template>
+  <div>
+    <Navbar />
+    <nuxt />
+  </div>
+</template>
+
+<script>
+import Navbar from "~/components/Navbar";
+
+export default {
+  components: {
+    Navbar,
+  },
+};
+</script>
+```
+
+## Home
+
+"Also, let’s update the homepage. Open pages/index.vue and replace its content
+with the following:"
+
+```vue
+<template>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Nuxt Auth</h1>
+    </div>
+  </section>
+</template>
+```
+
+This is what we have so far:
 
 ## Register
 
