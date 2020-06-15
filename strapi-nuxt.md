@@ -1,18 +1,15 @@
 # Strapi Authentication in a Nuxt.js App
 
-Implementing Strapi Authentication and Authorization in a Nuxt.js SSR project,
-using @nuxtjs/auth.
+In this tutorial, I'll walk you through on to implement Strapi Authentication
+and Authorization in a Nuxt.js app.
 
-In this tutorial I'll be showing you how I built a Vue.js app with
-Authentication using Cosmic JS and AWS Lambda prior to deploying to Netlify.
+"The project we are going to build will fetch remote data from the Pokemon API
+and display each pokemon with TypeScript."
 
-is going to walk you through on how to implement Strapi
-authentication in a Nuxt.js app.
+We'll be using Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is
+zero-boilerplate authentication module support for Nuxt.
 
-We'll be using the Nuxt's [Auth Module](https://auth.nuxtjs.org/)
-Zero-boilerplate authentication support for Nuxt
-
-This tutorial builds on top of Chimezie Enyinnaya's awesome
+This guide builds on top of Chimezie Enyinnaya's awesome
 [tutorial](https://www.digitalocean.com/community/tutorials/implementing-authentication-in-nuxtjs-app),
 adapting it to Strapi and adding the following:
 
@@ -20,19 +17,25 @@ adapting it to Strapi and adding the following:
 - Refresh token strategy
 - Password recovery
 
+I won't go in detailed explanation at each step, Chimezie's tutorial already
+does it so well.
+
 ## Pre-requisites
 
-You will be required to have Node JS and npm before starting. Make sure you already have them installed. If not you can find them here: https://nodejs.org
-Before we move on, I’d like to mention that although not mandatory, a working
-knowledge of the following technologies is beneficial:
+Before we move on, I’d like to mention that
+
+You will be required to have Node JS and npm before starting. Make sure you
+already have them installed. If not you can find them here: https://nodejs.org
+Although not mandatory, a basic knowledge of Strapi and Nuxt.js is recommended.
 
 Before you begin, you'll need:
 
 - Node.js 12.x
 - npm 6.x
 
-Strapi 3.0.1
-Nuxt.js v2.12.2
+Also, it's important to mention that this guide was written based on
+
+Strapi 3.0.1 Nuxt.js v2.12.2 SSR
 
 Let's get started!
 
@@ -596,9 +599,68 @@ Otherwise set error to the error message gotten from the API response. Again, we
 are using the Notification component from earlier on to display the error
 message."
 
+## Logout
+
+"We call the logout() of the Auth module. This will delete the user’s token from
+localstorage and redirect the user to the homepage."
+
+"Great! We have now done a lot, but something is still missing because the"
+
 ## User Profile
 
-## Logout
+"Let’s allow logged in users to view their profile. Create a new profile.vue file
+inside the pages directory and paste the code below in it:"
+
+```vue
+<template>
+  <section class="section">
+    <div class="container">
+      <h2 class="title">My Profile</h2>
+      <div class="content">
+        <p>
+          <strong>Username:</strong>
+          {{ loggedInUser.username }}
+        </p>
+        <p>
+          <strong>Email:</strong>
+          {{ loggedInUser.email }}
+        </p>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script>
+import { mapGetters } from "vuex";
+
+export default {
+  middleware: "auth",
+  computed: {
+    ...mapGetters(["loggedInUser"]),
+  },
+};
+</script>
+```
+
+## Restricting Register and Login for logged in user
+
+create file `middleware/guest.js`:
+
+```javascript
+export default function ({ store, redirect }) {
+  if (store.state.auth.loggedIn) {
+    return redirect("/");
+  }
+}
+```
+
+`login.vue` and `register.vue`:
+
+```javascript
+export default {
+  middleware: "guest",
+};
+```
 
 ## Recover Password
 
