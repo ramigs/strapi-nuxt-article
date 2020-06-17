@@ -670,6 +670,29 @@ export default {
 ## Password Reset
 
 user forgets password
+add a link to the forgot password page in `login.vue`:
+
+```html
+<p>
+  <nuxt-link to="/forgot-password">Forgot Password?</nuxt-link>
+</p>
+```
+
+PRINTSCREEN
+
+Now, lets create the new page `forgot-password.vue`:
+
+"This action sends an email to a user with the link to your reset password page.
+This link contains a URL param code which is required to reset user password."
+
+"This action will send the user an email that contains a URL with the needed code
+for the reset password. The URL must link to your reset password form in your
+frontend application.
+
+To configure it you will have to go in the Roles & Permissions settings and
+navigate to the Advanced Settings tab":
+
+PRINTSCREEN
 
 ## Conclusion
 
