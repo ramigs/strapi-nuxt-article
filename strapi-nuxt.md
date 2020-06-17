@@ -8,14 +8,17 @@ and display each pokemon with TypeScript."
 
 We'll be using Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is
 zero-boilerplate authentication module support for Nuxt.
+the official authentication module for Nuxt.
 
-This guide builds on top of Chimezie Enyinnaya's awesome
+Pooya Parsa
+
+This guide builds on top of Chimezie Enyinnaya's excellent
 [tutorial](https://www.digitalocean.com/community/tutorials/implementing-authentication-in-nuxtjs-app),
-adapting it to Strapi and adding the following:
+adapting it to Strapi's specific use case with the following functionality being added:
 
 - Email confirmation for registration
 - Refresh token strategy
-- Password recovery
+- Password reset
 
 I won't go in detailed explanation at each step, Chimezie's tutorial already
 does it so well.
@@ -217,6 +220,8 @@ auth: {
   }
 },
 ```
+
+local: username and password authentication
 
 "Here, we set the base URL (which is that of our API from earlier on) that Axios
 will use when making requests. Then we define the authentication endpoints for
@@ -662,7 +667,9 @@ export default {
 };
 ```
 
-## Recover Password
+## Password Reset
+
+user forgets password
 
 ## Conclusion
 
