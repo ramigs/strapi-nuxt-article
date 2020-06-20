@@ -3,25 +3,25 @@
 In this tutorial, I'll walk you through on to implement Strapi Authentication
 and Authorization in a Nuxt.js app.
 
-"The project we are going to build will fetch remote data from the Pokemon API
-and display each pokemon with TypeScript."
+We are going to build two projects one Strapi to store and manage users and on
+Nuxt app that will serve as the fronted that will access Strapi for
+authentication purposes.
+
+Strapi exposes the endpoints required
 
 We'll be using Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is
-zero-boilerplate authentication module support for Nuxt.
-the official authentication module for Nuxt.
-
-Pooya Parsa
+zero-boilerplate authentication module support for Nuxt. the official
+authentication module for Nuxt.
 
 This guide builds on top of Chimezie Enyinnaya's excellent
 [tutorial](https://www.digitalocean.com/community/tutorials/implementing-authentication-in-nuxtjs-app),
-adapting it to Strapi's specific use case with the following functionality being added:
+adapting it to Strapi's specific use case with the following functionality being
+added: I won't go in detailed explanation at each step, Chimezie's tutorial
+already does it so well. I'll focus on
 
 - Email confirmation for registration
-- Refresh token strategy
 - Password reset
-
-I won't go in detailed explanation at each step, Chimezie's tutorial already
-does it so well.
+- Token expiration strategy
 
 ## Pre-requisites
 
@@ -37,8 +37,10 @@ Before you begin, you'll need:
 - npm 6.x
 
 Also, it's important to mention that this guide was written based on
+the following versions:
 
-Strapi 3.0.1 Nuxt.js v2.12.2 SSR
+- Strapi 3.0.1 (stable release)
+- Nuxt.js v2.12.2 SSR
 
 Let's get started!
 
@@ -706,16 +708,43 @@ Create `/pages/reset-password.vue`:
 
 This action will reset the user password.
 
-Before testing go to Strapi, Roles & Permissions, Users-Permissions
-resetpassword enable:
+"Now that the code is ready, you have to make sure that the API consumer or user
+has the permissions to access all the necessary actions. For this, you would
+have to open up your UI Admin Panel and goto the ‘Roles & Permissions’ menu. If
+your using the API publicly, click on the role ‘Public’ and make sure all the
+actions under every plugin dropdowns of ‘Permissions’ section are checked (or
+at least all the ones relating to email’s send action)."
 
 PRINTSCREEN
 
 ![Strapi Reset Password](./strapi-reset-password.png)
 
+## Token Expiration
+
+One last thing we need to do before wrapping up.
+once we get a 401 unauthorized error we need to redirect the user to the login page.
+
+create a new file `plugins/axios.js`:
+
+```javascript
+export default function ({ $axios, redirect }) {
+  $axios.onError((error) => {
+    const code = parseInt(error.response && error.response.status);
+    if (code === 401) redirect("/login");
+  });
+}
+```
+
+in `nuxt.config.js` import the file we've just created:
+
+```javascript
+plugins: ['~plugins/axios'],
+```
+
 ## Conclusion
 
-"So there you have it — a static API."
+motivated me to consolidate all my findings and write this article. Hope it
+helps!
 
 https://youtu.be/0hAmccuaK5Q
 https://www.npmjs.com/package/strapi-provider-email-console
