@@ -685,6 +685,12 @@ Now, lets create the new page `forgot-password.vue`:
 "This action sends an email to a user with the link to your reset password page.
 This link contains a URL param code which is required to reset user password."
 
+"If account exists, an email will be sent with further instructions"
+By not promising the user that an email will be sent and not disclosing whether
+the email/username even exists in the database, we 1) encourage them to double
+check their credentials (in case they don’t get the link) and 2) prevent
+phishing attacks.
+
 "This action will send the user an email that contains a URL with the needed code
 for the reset password. The URL must link to your reset password form in your
 frontend application.
@@ -692,7 +698,20 @@ frontend application.
 To configure it you will have to go in the Roles & Permissions settings and
 navigate to the Advanced Settings tab":
 
+http://localhost:3000/reset-password
+
 PRINTSCREEN
+
+Create `/pages/reset-password.vue`:
+
+This action will reset the user password.
+
+Before testing go to Strapi, Roles & Permissions, Users-Permissions
+resetpassword enable:
+
+PRINTSCREEN
+
+![Strapi Reset Password](./strapi-reset-password.png)
 
 ## Conclusion
 
