@@ -1,4 +1,4 @@
-# Strapi Authentication in a Nuxt.js App
+# Strapi Authentication in Nuxt.js
 
 In this tutorial, I'll walk you through on to implement Strapi Authentication
 and Authorization in a Nuxt.js app.
