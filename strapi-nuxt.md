@@ -44,55 +44,52 @@ Let's get started!
 
 ## Install Strapi
 
-"First things first, we begin by creating a local Strapi app. you to have a
-generated Strapi project. If not already generated, you can quickly get started
-here to generate one."
+First things first, we begin by generating a local Strapi project:
 
 ```shell
 npx create-strapi-app strapi-users --quickstart
 ```
 
-"If you created your application using --quickstart flag, it will automatically
-run your application."
+For practicality we'll be using but the steps in this guide also apply if a
+different database engine.
 
-### Enable Email Confirmation
+We've used the `--quickstart` flag that tells Strapi to use SQLite for the
+database and automatically run our application:
 
-on the left sidebar:
-Go to Roles & Permissions under Plugins
-in the Advanced Settings tab:
-Enable email confirmation
+automatically launched Strapi in your browser create Admin.
+To finish setup and secure your app, please create the first user (root admin)
+by entering the necessary information below.
+
+## Enable email confirmation
+
+By default, the user registration process in Strapi does not include an email
+confirmation step.
+
+To enable it, navigate to Roles & Permissions (from the left sidebar of the
+admin dashboard, under Plugins). Click the Advanced Settings tab, enable the
+email confirmation option and save:
 
 ![Enable email confirmation Strapi](./strapi-nuxt-enable-email-confirmation.png)
 
-It comes by default but aMake sure Enable registration route for
-is enabled for Public role
-
-"To start your Strapi application you will have to run the following command in
-your application folder:"
-
-```shell
-npm install
-npm run develop
-```
-
-### Install and Configure Email Console provider
-
-"Establishing some technical details before we start — we will be using Strapi’s
-default email provider (local email system) which as I mentioned is built-in or
-already installed in every generated project. If you want to use another
-provider, you would need to first install the corresponding npm package. You can
-check npmjs.com for all the email providers
-[list](https://www.npmjs.com/search?q=strapi-email-)."
+## Email console provider
 
 Thanks to the plugin Email, you can send email from your server or externals
 providers such as Sendgrid.
 
-By default Strapi provides a local email system (sendmail). If you want to use a
-third party to send emails, you need to install the correct provider module.
-Otherwise you can skip this part and continue to Configure your provider.
+"Establishing some technical details before we start — we will be using Strapi’s
+default email provider (local email system) which as I mentioned is built-in or
+already installed in every generated project.
 
-You can check all the available providers developed by the community on
-npmjs.org - Providers list
+A fake email provider for Strapi, use in development environment. If you want to
+use a third party to send emails, you need to install the correct provider
+module.
+
+https://github.com/aperron/strapi-provider-email-console
+
+We just want to make sure that the emails are firing and check their content.
+
+If you want to use another
+provider, you would need to first install the corresponding npm package. You can
 
 To install the new provider run:
 
@@ -101,11 +98,8 @@ cd strapi-users
 npm install strapi-provider-email-console
 ```
 
-After installing your provider you will need to add some settings in
-config/plugins.js. Check the README of each provider to know what configuration
-settings the provider needs.
-
-`./config/plugins.js`:
+After installing the provider, you will need to configure it add some settings
+in `./config/plugins.js`:
 
 ```javascript
 module.exports = ({ env }) => ({
@@ -113,6 +107,14 @@ module.exports = ({ env }) => ({
     provider: "console",
   },
 });
+```
+
+"To start your Strapi application you will have to run the following command in
+your application folder:"
+
+```shell
+npm install
+npm run develop
 ```
 
 ## Create Nuxt project
@@ -180,6 +182,8 @@ axios: {
 },
 ```
 
+## Configure Nuxt Auth
+
 Enable vuex store by creating `store/index.js`:
 
 ```javascript
@@ -193,8 +197,6 @@ export const getters = {
   },
 };
 ```
-
-## Configure Nuxt Auth
 
 "Next, we need to set up the modules. Paste the code below into `nuxt.config.js`:"
 
