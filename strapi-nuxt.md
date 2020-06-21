@@ -3,6 +3,8 @@
 In this tutorial, I'll walk you through on to implement Strapi Authentication
 and Authorization in a Nuxt.js app.
 
+A step-by-step guide
+
 We are going to build two projects one Strapi to store and manage users and on
 Nuxt app that will serve as the fronted that will access Strapi for
 authentication purposes.
@@ -25,30 +27,26 @@ already does it so well. I'll focus on
 
 ## Pre-requisites
 
-Before we move on, I’d like to mention that
-
-You will be required to have Node JS and npm before starting. Make sure you
-already have them installed. If not you can find them here: https://nodejs.org
-Although not mandatory, a basic knowledge of Strapi and Nuxt.js is recommended.
-
-Before you begin, you'll need:
+To follow this tutorial, make sure you have Node.js installed:
 
 - Node.js 12.x
 - npm 6.x
 
-Also, it's important to mention that this guide was written based on
-the following versions:
+Although not required, a basic knowledge of Strapi and Nuxt.js is recommended.
+
+Also, it's important to mention that this guide was written based on the
+following versions:
 
 - Strapi 3.0.1 (stable release)
-- Nuxt.js v2.12.2 SSR
+- Nuxt.js 2.12.2
 
 Let's get started!
 
-## Installing Strapi
+## Install Strapi
 
-"First things first, we begin by creating a local Strapi app. you to have a generated
-Strapi project (currently v3.0.0-alpha.14). If not already generated, you can
-quickly get started here to generate one."
+"First things first, we begin by creating a local Strapi app. you to have a
+generated Strapi project. If not already generated, you can quickly get started
+here to generate one."
 
 ```shell
 npx create-strapi-app strapi-users --quickstart
@@ -57,7 +55,7 @@ npx create-strapi-app strapi-users --quickstart
 "If you created your application using --quickstart flag, it will automatically
 run your application."
 
-### Enabling Email Confirmation
+### Enable Email Confirmation
 
 on the left sidebar:
 Go to Roles & Permissions under Plugins
@@ -69,12 +67,15 @@ Enable email confirmation
 It comes by default but aMake sure Enable registration route for
 is enabled for Public role
 
+"To start your Strapi application you will have to run the following command in
+your application folder:"
+
 ```shell
 npm install
 npm run develop
 ```
 
-### Installing and Configuring Email Console provider
+### Install and Configure Email Console provider
 
 "Establishing some technical details before we start — we will be using Strapi’s
 default email provider (local email system) which as I mentioned is built-in or
@@ -114,9 +115,10 @@ module.exports = ({ env }) => ({
 });
 ```
 
-## Creating our Nuxt App
+## Create Nuxt project
 
-Now, let's change gears and look at this tutorial's core app.
+Now, let's change gears and focus on the frontend app. It will be a Nuxt.js
+isomorphic application (server-side rendering + client-side navigation).
 
 To get started quickly, we'll initialize the project using Nuxt's scaffolding
 tool:
@@ -132,15 +134,50 @@ Go through the guide and make sure to select the following options:
 
 ![Create Nuxt app](./create-nuxt-app-options.png)
 
-Once the tool finishes creating our Nuxt app,
-
-Let's edit the .env file and add an environment variable for Strapi's API URL:
-"Next, you'll need to make sure you have a .env file in your root project
-directory to change the VUE_APP_API_HOST variable to point to the lambda server
-you just started running."
+Once the tool finishes creating the app, we're going to edit the `.env` file in
+the project's root directory, adding a new environment variable pointing to the
+URL of the Strapi app that's running:
 
 ```
 API_AUTH_URL=http://localhost:1337
+```
+
+Next, navigate to the project's root directory and install the required Nuxt
+Auth module dependency:
+
+```shell
+cd nuxt-auth
+npm install @nuxtjs/auth
+```
+
+Once the installation is done, add the module in `nuxt.config.js`:
+
+```javascript
+modules: [
+  // Doc: https://github.com/nuxt-community/modules/tree/master/packages/bulma
+  '@nuxtjs/bulma',
+  // Doc: https://axios.nuxtjs.org/usage
+  '@nuxtjs/axios',
+  // Doc: https://github.com/nuxt-community/dotenv-module
+  '@nuxtjs/dotenv',
+  '@nuxtjs/auth'
+],
+```
+
+At the top of `nuxt.config.js` add also the following code that loads the
+environment variables:
+
+```javascript
+require("dotenv").config();
+```
+
+One last step we need to do in this file. Configure the base URL that axios will
+use when making API requests (which is the env variable we've added previously):
+
+```javascript
+axios: {
+  baseURL: process.env.API_AUTH_URL
+},
 ```
 
 Enable vuex store by creating `store/index.js`:
@@ -157,43 +194,7 @@ export const getters = {
 };
 ```
 
-Now, install also the required
-Nuxt Auth module dependency:
-
-```shell
-cd nuxt-auth
-npm install @nuxtjs/auth
-```
-
-Edit `nuxt.config.js` adding the module we've just installed:
-
-```javascript
-modules: [
-  // Doc: https://github.com/nuxt-community/modules/tree/master/packages/bulma
-  '@nuxtjs/bulma',
-  // Doc: https://axios.nuxtjs.org/usage
-  '@nuxtjs/axios',
-  // Doc: https://github.com/nuxt-community/dotenv-module
-  '@nuxtjs/dotenv',
-  '@nuxtjs/auth'
-],
-```
-
-In the top of nuxt.config.js require and configure dotenv:
-
-```javascript
-require("dotenv").config();
-```
-
-"axios. Paste the code below into `nuxt.config.js`:"
-
-```javascript
-axios: {
-  baseURL: process.env.API_AUTH_URL
-},
-```
-
-## Configuring Nuxt Auth
+## Configure Nuxt Auth
 
 "Next, we need to set up the modules. Paste the code below into `nuxt.config.js`:"
 
@@ -258,20 +259,6 @@ remove the token from localstorage when a user logs out."
     </div>
 
     <div id="navbarBasicExample" class="navbar-menu">
-      <!--       <div class="navbar-start">
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link">
-            My Account
-          </a>
-
-          <div class="navbar-dropdown">
-            <nuxt-link class="navbar-item" to="/profile">My Profile</nuxt-link>
-            <hr class="navbar-divider" />
-            <a class="navbar-item">Logout</a>
-          </div>
-        </div>
-      </div> -->
-
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
@@ -503,7 +490,8 @@ component, which we’ll create shortly."
 
 ### Confirm Email
 
-Switch to console where Strapi is running and copy the link to the browser and visit.
+Switch to console where Strapi is running and copy the link to the browser and
+visit.
 
 This will change confirm the user.
 
@@ -745,6 +733,7 @@ plugins: ['~plugins/axios'],
 
 motivated me to consolidate all my findings and write this article. Hope it
 helps!
+"We hope you find this project useful for learning testing and Cypress."
 
 https://youtu.be/0hAmccuaK5Q
 https://www.npmjs.com/package/strapi-provider-email-console
