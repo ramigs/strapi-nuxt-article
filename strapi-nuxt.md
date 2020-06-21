@@ -18,8 +18,8 @@ authentication module for Nuxt.
 This guide builds on top of Chimezie Enyinnaya's excellent
 [tutorial](https://www.digitalocean.com/community/tutorials/implementing-authentication-in-nuxtjs-app),
 adapting it to Strapi's specific use case with the following functionality being
-added: I won't go in detailed explanation at each step, Chimezie's tutorial
-already does it so well. I'll focus on
+added: I won't go in detailed explanation at each step, I recommend you refer to
+Chimezie's tutorial already does it so well. I'll focus on
 
 - Email confirmation for registration
 - Password reset
@@ -117,7 +117,7 @@ npm install
 npm run develop
 ```
 
-## Create Nuxt project
+## Create a Nuxt app
 
 Now, let's change gears and focus on the frontend app. It will be a Nuxt.js
 isomorphic application (server-side rendering + client-side navigation).
@@ -134,7 +134,7 @@ Go through the guide and make sure to select the following options:
 - axios and dotenv in the **Nuxt.js modules** step
 - Bulma CSS in the **UI framework** step, which we'll use to style our app
 
-![Create Nuxt app](./create-nuxt-app-options.png)
+![Create a Nuxt app](./create-nuxt-app-options.png)
 
 Once the tool finishes creating the app, we're going to edit the `.env` file in
 the project's root directory, adding a new environment variable pointing to the
@@ -184,7 +184,11 @@ axios: {
 
 ## Configure Nuxt Auth
 
-Enable vuex store by creating `store/index.js`:
+The Auth module uses Vuex's state management to store the user authentication
+status and user info.
+
+Let's enable the Vuex store by creating an `index.js` file inside the `store`
+directory with the store getters:
 
 ```javascript
 export const getters = {
@@ -198,7 +202,8 @@ export const getters = {
 };
 ```
 
-"Next, we need to set up the modules. Paste the code below into `nuxt.config.js`:"
+Now, we are ready to configure the Auth module. Paste the code below into
+`nuxt.config.js`:
 
 ```javascript
 /*
@@ -228,17 +233,18 @@ auth: {
 
 local: username and password authentication
 
-"Here, we set the base URL (which is that of our API from earlier on) that Axios
-will use when making requests. Then we define the authentication endpoints for
-the local strategy corresponding to those on our API. On successful
-authentication, the token will be available in the response as a token object
-inside a data object, hence why we set propertyName to data.token. Similarly,
-the response from the /me endpoint will be inside a data object. Lastly, we set
-logout to false since our API doesn’t have an endpoint for logout. We’ll just
-remove the token from localstorage when a user logs out."
+Then we define the authentication endpoints for the local strategy corresponding
+to those on our API. On successful authentication, the token will be available
+in the response as a token object inside a data object, hence why we set
+propertyName to data.token. Similarly, the response from the /me endpoint will
+be inside a data object. Lastly, we set logout to false since our API doesn’t
+have an endpoint for logout. We’ll just remove the token from localstorage when
+a user logs out."
 
 ## Navbar Component
 
+"The Navbar component contains links to login or register, links to view profile
+or logout."
 `Navbar.vue` and replace it content with the following:
 
 ```vue
@@ -303,9 +309,6 @@ export default {
 };
 </script>
 ```
-
-"The Navbar component contains links to login or register, links to view profile
-or logout."
 
 ## Default Layout
 
