@@ -9,11 +9,8 @@ We are going to build two projects one Strapi to store and manage users and on
 Nuxt app that will serve as the fronted that will access Strapi for
 authentication purposes.
 
-Strapi exposes the endpoints required
-
-We'll be using Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is
-zero-boilerplate authentication module support for Nuxt. the official
-authentication module for Nuxt.
+We'll be using Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is the
+official zero-boilerplate authentication module for Nuxt.js.
 
 This guide builds on top of Chimezie Enyinnaya's excellent
 [tutorial](https://www.digitalocean.com/community/tutorials/implementing-authentication-in-nuxtjs-app),
@@ -24,6 +21,8 @@ Chimezie's tutorial already does it so well. I'll focus on
 - Email confirmation for registration
 - Password reset
 - Token expiration strategy
+
+Strapi exposes the endpoints required
 
 ## Pre-requisites
 
@@ -184,6 +183,9 @@ axios: {
 
 ## Configure Nuxt Auth
 
+"Then we define the authentication endpoints for the local strategy corresponding
+to those on our API."
+
 The Auth module uses Vuex's state management to store the user authentication
 status and user info.
 
@@ -231,15 +233,23 @@ auth: {
 },
 ```
 
+We've configured two authentication endpoints:
+
+- `login`: to authenticate the user On successful authentication, the token will be available
+  in the response as a token object inside a data object, hence why we set
+  propertyName to data.token
+- `user`: Similarly, the response from the /me endpoint will
+  be inside a data object
+
+We've also disabled the `logout` endpoint, since logging out a user only happens
+locally and doesn't required any request to Strapi's API. We’ll just remove the
+token from local storage when a user logs out."
+
 local: username and password authentication
 
-Then we define the authentication endpoints for the local strategy corresponding
-to those on our API. On successful authentication, the token will be available
-in the response as a token object inside a data object, hence why we set
-propertyName to data.token. Similarly, the response from the /me endpoint will
-be inside a data object. Lastly, we set logout to false since our API doesn’t
-have an endpoint for logout. We’ll just remove the token from localstorage when
-a user logs out."
+propertyName can be used to specify which field of the response JSON to be used
+for value. It can be false to directly use API response or being more
+complicated like auth.user.
 
 ## Navbar Component
 
@@ -353,12 +363,12 @@ This is what we have so far:
 
 ## Notification Component
 
-If there is an error, the error message is displayed by a Notification
-component, which we’ll create shortly.
-
 Before we test the user registration out, let’s create the Notification
 component. Create a new Notification.vue file inside components and paste the
 code below in it:
+
+If there is an error, the error message is displayed by a Notification
+component, which we’ll create shortly.
 
 ```vue
 <template>
@@ -484,14 +494,18 @@ export default {
 "This contains a form with three fields: username, email, and password. Each
 field is bound to a corresponding data on the component. When the form is
 submitted, a register method will be called. Using the Axios module, we make a
-post request to the /register endpoint, passing along the user data. If the
-registration was successful, we make use of the Auth module’s loginWith(), using
-the local strategy and passing the user data to log the user in. Then we
-redirect the user to the homepage. If there is an error during the registration,
-we set the error data as the error message gotten from the API response.
+post request to the /register endpoint, passing along the user data.
 
-If there is an error, the error message is displayed by a Notification
-component, which we’ll create shortly."
+If the registration was successful, we display a success message, requesting
+that the user completes the registration process by clicking the confirmation
+link in sent email:
+
+PRINTSCREEN
+
+If an error occurs, the error message is displayed by the Notification component
+we've created previously:
+
+PRINTSCREEN
 
 ### Confirm Email
 
@@ -606,6 +620,14 @@ localstorage and redirect the user to the homepage."
 
 "Great! We have now done a lot, but something is still missing because the"
 
+```javascript
+methods: {
+    async logout() {
+      await this.$auth.logout()
+    }
+  }
+```
+
 ## User Profile
 
 "Let’s allow logged in users to view their profile. Create a new profile.vue file
@@ -686,14 +708,13 @@ the email/username even exists in the database, we 1) encourage them to double
 check their credentials (in case they don’t get the link) and 2) prevent
 phishing attacks.
 
-"This action will send the user an email that contains a URL with the needed code
-for the reset password. The URL must link to your reset password form in your
+This action will send an email to the user with a link containing the required
+code for the reset password. must link to your reset password form in your
 frontend application.
 
 To configure it you will have to go in the Roles & Permissions settings and
-navigate to the Advanced Settings tab":
-
-http://localhost:3000/reset-password
+navigate to the Advanced Settings tab
+`http://localhost:3000/reset-password`:
 
 PRINTSCREEN
 
@@ -714,8 +735,8 @@ PRINTSCREEN
 
 ## Token Expiration
 
-One last thing we need to do before wrapping up.
-once we get a 401 unauthorized error we need to redirect the user to the login page.
+One last thing before we wrap up. once we get a 401 unauthorized error we need
+to redirect the user to the login page.
 
 create a new file `plugins/axios.js`:
 
