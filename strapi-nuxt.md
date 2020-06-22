@@ -36,28 +36,43 @@ Although not required, a basic knowledge of Strapi and Nuxt.js is recommended.
 Also, it's important to mention that this guide was written based on the
 following versions:
 
-- Strapi 3.0.1 (stable release)
-- Nuxt.js 2.12.2
+> Disclaimer: this tutorial was written for Strapi 3.0.1 (stable release) and
+> Nuxt.js 2.12.2. It should work on different versions too, but you may need to
+> adapt it here and there.
 
 Let's get started!
 
 ## Install Strapi
 
-First things first, we begin by generating a local Strapi project:
+First things first, we begin by creating a local Strapi project:
 
 ```shell
 npx create-strapi-app strapi-users --quickstart
 ```
 
+We've used the `--quickstart` flag that
+installs Strapi with the default settings. It also tells Strapi to use SQLite
+for the database and automatically run our application:
+
 For practicality we'll be using but the steps in this guide also apply if a
 different database engine.
 
-We've used the `--quickstart` flag that tells Strapi to use SQLite for the
-database and automatically run our application:
+"In our installation we used the default database, SQLite, because it doesn’t
+require to run a dedicated database server, but instead the actual database is
+just that one file."
 
+Once the download and installation are finished,
 automatically launched Strapi in your browser create Admin.
+
 To finish setup and secure your app, please create the first user (root admin)
 by entering the necessary information below.
+
+"After the installation the application will start automatically"
+"Strapi will start, a browser window will open automatically and ask you to make
+an administrator account."
+
+"From now on, when you want to visit the Strapi admin interface, you can browse
+to localhost:1337/admin."
 
 ## Enable email confirmation
 
@@ -90,7 +105,7 @@ We just want to make sure that the emails are firing and check their content.
 If you want to use another
 provider, you would need to first install the corresponding npm package. You can
 
-To install the new provider run:
+Stop the Strapi app that's running and install the new provider:
 
 ```shell
 cd strapi-users
@@ -110,6 +125,7 @@ module.exports = ({ env }) => ({
 
 "To start your Strapi application you will have to run the following command in
 your application folder:"
+To start the Strapi gallery application, type npm run develop from this folder.
 
 ```shell
 npm install
@@ -135,6 +151,8 @@ Go through the guide and make sure to select the following options:
 
 ![Create a Nuxt app](./create-nuxt-app-options.png)
 
+"Our application also has some dynamic configuration based on the environment. We
+will put this configuration into the .env file."
 Once the tool finishes creating the app, we're going to edit the `.env` file in
 the project's root directory, adding a new environment variable pointing to the
 URL of the Strapi app that's running:
@@ -255,6 +273,7 @@ complicated like auth.user.
 
 "The Navbar component contains links to login or register, links to view profile
 or logout."
+
 `Navbar.vue` and replace it content with the following:
 
 ```vue
@@ -319,6 +338,8 @@ export default {
 };
 </script>
 ```
+
+Let us make this form functional by adding the following code:
 
 ## Default Layout
 
@@ -500,6 +521,9 @@ If the registration was successful, we display a success message, requesting
 that the user completes the registration process by clicking the confirmation
 link in sent email:
 
+The user simply has to check a confirmation email they received when they signed
+up. Within that email, there is a link which will redirect you back to your app.
+
 PRINTSCREEN
 
 If an error occurs, the error message is displayed by the Notification component
@@ -618,8 +642,6 @@ message."
 "We call the logout() of the Auth module. This will delete the user’s token from
 localstorage and redirect the user to the homepage."
 
-"Great! We have now done a lot, but something is still missing because the"
-
 ```javascript
 methods: {
     async logout() {
@@ -630,8 +652,9 @@ methods: {
 
 ## User Profile
 
-"Let’s allow logged in users to view their profile. Create a new profile.vue file
-inside the pages directory and paste the code below in it:"
+Time for the user profile page.
+
+Create a new `/pages/profile.vue` file with the following code:
 
 ```vue
 <template>
@@ -663,6 +686,9 @@ export default {
 };
 </script>
 ```
+
+The `auth` middleware guarantees that only logged in users will be able to
+access the page.
 
 ## Restricting Register and Login for logged in user
 
@@ -718,7 +744,7 @@ navigate to the Advanced Settings tab
 
 PRINTSCREEN
 
-Create `/pages/reset-password.vue`:
+Create a `/pages/reset-password.vue` file and paste the following code into it:
 
 This action will reset the user password.
 
@@ -734,6 +760,8 @@ PRINTSCREEN
 ![Strapi Reset Password](./strapi-reset-password.png)
 
 ## Token Expiration
+
+"Great! We have now done a lot, but something is still missing because the"
 
 One last thing before we wrap up. once we get a 401 unauthorized error we need
 to redirect the user to the login page.
