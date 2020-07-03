@@ -1,9 +1,7 @@
 # Strapi Authentication in Nuxt.js
 
-In this tutorial, I'll walk you through on to implement Strapi Authentication
-and Authorization in a Nuxt.js app.
-
-A step-by-step guide
+This tutorial is a step-by-step guide on how to implement Strapi Authentication
+and in a Nuxt.js app.
 
 We are going to build two projects one Strapi to store and manage users and on
 Nuxt app that will serve as the fronted that will access Strapi for
@@ -12,8 +10,10 @@ authentication purposes.
 We'll be using Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is the
 official zero-boilerplate authentication module for Nuxt.js.
 
+Authorization
+
 This guide builds on top of Chimezie Enyinnaya's excellent
-[tutorial](https://www.digitalocean.com/community/tutorials/implementing-authentication-in-nuxtjs-app),
+[work](https://www.digitalocean.com/community/tutorials/implementing-authentication-in-nuxtjs-app),
 adapting it to Strapi's specific use case with the following functionality being
 added: I won't go in detailed explanation at each step, I recommend you refer to
 Chimezie's tutorial already does it so well. I'll focus on
@@ -33,10 +33,7 @@ To follow this tutorial, make sure you have Node.js installed:
 
 Although not required, a basic knowledge of Strapi and Nuxt.js is recommended.
 
-Also, it's important to mention that this guide was written based on the
-following versions:
-
-> Disclaimer: this tutorial was written for Strapi 3.0.1 (stable release) and
+> Disclaimer: this tutorial was written based on Strapi 3.0.1 (stable release) and
 > Nuxt.js 2.12.2. It should work on different versions too, but you may need to
 > adapt it here and there.
 
@@ -76,12 +73,12 @@ to localhost:1337/admin."
 
 ## Enable email confirmation
 
-By default, the user registration process in Strapi does not include an email
+By default, the user registration process in Strapi does not include the email
 confirmation step.
 
-To enable it, navigate to Roles & Permissions (from the left sidebar of the
-admin dashboard, under Plugins). Click the Advanced Settings tab, enable the
-email confirmation option and save:
+To enable it, go to Roles & Permissions (from the left sidebar of the Admin
+dashboard, under Plugins). Click the Advanced Settings tab, enable the email
+confirmation option and save:
 
 ![Enable email confirmation Strapi](./strapi-nuxt-enable-email-confirmation.png)
 
@@ -384,12 +381,14 @@ This is what we have so far:
 
 ## Notification Component
 
-Before we test the user registration out, let’s create the Notification
-component. Create a new Notification.vue file inside components and paste the
-code below in it:
+Before we test the user registration, let’s create a Notification component so
+we can get some feedback in the browser.
 
-If there is an error, the error message is displayed by a Notification
-component, which we’ll create shortly.
+If everything goes as expected it should display a success message. Otherwise,
+an error message should be displayed.
+
+Create a new `./components/Notification.vue` file and paste in it the code
+below:
 
 ```vue
 <template>
@@ -640,7 +639,7 @@ message."
 ## Logout
 
 "We call the logout() of the Auth module. This will delete the user’s token from
-localstorage and redirect the user to the homepage."
+local storage and redirect the user to the homepage."
 
 ```javascript
 methods: {
