@@ -350,11 +350,6 @@ export default {
       });
     }
   },
-  methods: {
-    async logout() {
-      await this.$auth.logout();
-    },
-  },
 };
 </script>
 ```
@@ -363,10 +358,6 @@ The code in the `mounted` hook comes from [Bulma's Navbar
 documentation](https://bulma.io/documentation/components/navbar/). Its purpose
 is to toggle the display of the `navbar-menu` when the `navbar-burger` icon is
 clicked.
-
-We've also added the `logout` method that's triggered "of the Auth module, which
-deletes the JWT token from the local storage and redirects the user to the
-homepage.
 
 ## Default Layout
 
@@ -668,8 +659,10 @@ message."
 
 ## Logout
 
-"We call the logout() of the Auth module. This will delete the user’s token from
-local storage and redirect the user to the homepage."
+`Navbar.vue`
+We've also added the `logout` method that's triggered "of the Auth module, which
+deletes the JWT token from the local storage and redirects the user to the
+homepage.
 
 ```javascript
 methods: {
