@@ -84,33 +84,27 @@ confirmation option and save:
 
 ## Email console provider
 
-Thanks to the plugin Email, you can send email from your server or externals
-providers such as Sendgrid.
+Thanks to Strapi's Email plugin, we can have a Strapi instance send emails from
+our server's local email system or externals providers (e.g., SendGrid).
 
-"Establishing some technical details before we start — we will be using Strapi’s
-default email provider (local email system) which as I mentioned is built-in or
-already installed in every generated project.
+Email setup and configuration is not within the scope of this article. We just
+want to make sure that the emails are being fired when expected and inspect
+their content.
 
-A fake email provider for Strapi, use in development environment. If you want to
-use a third party to send emails, you need to install the correct provider
-module.
+For that, we're going to use a ["fake" email
+provider](https://github.com/aperron/strapi-provider-email-console) for
+development, that simply outputs the emails to the console.
 
-https://github.com/aperron/strapi-provider-email-console
-
-We just want to make sure that the emails are firing and check their content.
-
-If you want to use another
-provider, you would need to first install the corresponding npm package. You can
-
-Stop the Strapi app that's running and install the new provider:
+So, let's install the email provider module. Stop the Strapi app that's running
+and install the new email provider:
 
 ```shell
 cd strapi-users
 npm install strapi-provider-email-console
 ```
 
-After installing the provider, you will need to configure it add some settings
-in `./config/plugins.js`:
+Once the installation is done, you will need to add the provider in
+`./config/plugins.js`:
 
 ```javascript
 module.exports = ({ env }) => ({
