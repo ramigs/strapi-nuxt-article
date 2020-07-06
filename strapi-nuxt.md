@@ -256,7 +256,8 @@ We've configured two endpoints:
   will be available in the `jwt` property of the response object.
 - `user`: retrieves the authenticated user's info. If the user is authenticated,
   the JWT token will be sent in the request, allowing Strapi to identify the
-  user.
+  user. Since the response object is already the user info, we set
+  `propertyName` to `false`.
 
 We've also disabled the `logout` endpoint, since logging out a user is only done
 locally, and doesn't require any request to Strapi's API. The token is simply
@@ -264,10 +265,7 @@ removed the from the local storage when the user logs out.
 
 ## Navbar Component
 
-"The Navbar component contains links to login or register, links to view profile
-or logout."
-
-`Navbar.vue` and replace it content with the following:
+Create a file `./components/Navbar.vue` with the following code:
 
 ```vue
 <template>
@@ -289,7 +287,21 @@ or logout."
     </div>
 
     <div id="navbarBasicExample" class="navbar-menu">
-      <div class="navbar-end">
+      <div v-if="isAuthenticated" class="navbar-start">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">
+            {{ loggedInUser.username }}
+          </a>
+
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="/profile">My Profile</a>
+            <hr class="navbar-divider" />
+            <a class="navbar-item" @click="logout">Logout</a>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="!isAuthenticated" class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
             <nuxt-link class="button is-primary" to="/register">
@@ -304,9 +316,19 @@ or logout."
     </div>
   </nav>
 </template>
+```
 
+Let us make component functional by adding the following `<script></script>`
+code:
+
+```vue
 <script>
+import { mapGetters } from "vuex";
+
 export default {
+  computed: {
+    ...mapGetters(["isAuthenticated", "loggedInUser"]),
+  },
   mounted() {
     // Get all "navbar-burger" elements
     const $navbarBurgers = Array.prototype.slice.call(
@@ -328,16 +350,28 @@ export default {
       });
     }
   },
+  methods: {
+    async logout() {
+      await this.$auth.logout();
+    },
+  },
 };
 </script>
 ```
 
-Let us make this form functional by adding the following code:
+The code in the `mounted` hook comes from [Bulma's Navbar
+documentation](https://bulma.io/documentation/components/navbar/). Its purpose
+is to toggle the display of the `navbar-menu` when the `navbar-burger` icon is
+clicked.
+
+We've also added the `logout` method that's triggered "of the Auth module, which
+deletes the JWT token from the local storage and redirects the user to the
+homepage.
 
 ## Default Layout
 
-"Next, let’s update the default layout to make use of the Navbar component. Open
-layouts/default.vue and replace its content with the following:"
+Edit the file `./layouts/default.vue` and replace its content with the
+following:
 
 ```vue
 <template>
@@ -739,7 +773,7 @@ navigate to the Advanced Settings tab
 
 PRINTSCREEN
 
-Create a `/pages/reset-password.vue` file and paste the following code into it:
+Create a `./pages/reset-password.vue` file and paste the following code into it:
 
 This action will reset the user password.
 
