@@ -69,17 +69,17 @@ user, by entering the necessary information below:
 
 PRINTSCREEN
 
-From now on, when you want to access Strapi's local Admin interface, you can
-visit [http://localhost:1337/admin](http://localhost:1337/admin).
+From now on, you can access Strapi's local Admin interface by visiting
+[http://localhost:1337/admin](http://localhost:1337/admin).
 
 ## Enable email confirmation
 
-By default, the user registration process in Strapi does not include the email
-confirmation step.
+By default, the user registration process in Strapi does not include email
+confirmation.
 
-To enable it, go to **Roles & Permissions** (from the left sidebar of the Admin
-dashboard, under **Plugins**). Click the Advanced Settings tab, enable the email
-confirmation option and save:
+To enable it, go to **Roles & Permissions** from the left sidebar of the Admin
+dashboard. Click the Advanced Settings tab, enable the email confirmation option
+and save:
 
 ![Enable email confirmation Strapi](./strapi-nuxt-enable-email-confirmation.png)
 
