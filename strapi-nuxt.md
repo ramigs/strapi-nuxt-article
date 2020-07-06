@@ -203,8 +203,8 @@ axios: {
 The Auth module uses Vuex's state management to store the user authentication
 status and user info.
 
-Enable the Vuex store by creating a `index.js` file inside the `store` directory
-with the store getters:
+Enable the Vuex store by creating a `./store/index.js` file with the store
+getters:
 
 ```javascript
 export const getters = {
@@ -354,6 +354,10 @@ export default {
 </script>
 ```
 
+We've defined the computed properties `isAuthenticated` and `loggedInUser` used
+in the component's template. These come from the previously created store
+getters.
+
 The code in the `mounted` hook comes from [Bulma's Navbar
 documentation](https://bulma.io/documentation/components/navbar/). Its purpose
 is to toggle the display of the `navbar-menu` when the `navbar-burger` icon is
@@ -361,8 +365,7 @@ clicked.
 
 ## Default Layout
 
-Edit the file `./layouts/default.vue` and replace its content with the
-following:
+Edit `./layouts/default.vue` and replace its content with the following:
 
 ```vue
 <template>
@@ -385,8 +388,7 @@ export default {
 
 ## Homepage
 
-"Also, let’s update the homepage. Open pages/index.vue and replace its content
-with the following:"
+Edit `./pages/index.vue` and replace its content with the following:
 
 ```vue
 <template>
@@ -399,6 +401,8 @@ with the following:"
 ```
 
 This is what we have so far:
+
+PRINTSCREEN
 
 ## Notification Component
 
