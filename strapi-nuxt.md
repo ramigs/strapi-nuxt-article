@@ -1,28 +1,33 @@
 # Strapi Authentication in Nuxt.js
 
 This tutorial is a step-by-step guide on how to implement Strapi Authentication
-and in a Nuxt.js app.
+and in Nuxt.js app.
 
-We are going to build two projects one Strapi to store and manage users and on
-Nuxt app that will serve as the fronted that will access Strapi for
-authentication purposes.
+We are going to build two projects:
 
-We'll be using Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is the
+- Backend: Strapi app to store and manage users
+- Frontend: Nuxt app that will access Strapi's API for authentication purposes
+
+We'll be relying on Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is the
 official zero-boilerplate authentication module for Nuxt.js.
 
-Authorization
+We will also be implementing some basic authorization features, such as
+restricting certain pages to only logged in users.
 
 This guide builds on top of Chimezie Enyinnaya's excellent
 [work](https://www.digitalocean.com/community/tutorials/implementing-authentication-in-nuxtjs-app),
-adapting it to Strapi's specific use case with the following functionality being
-added: I won't go in detailed explanation at each step, I recommend you refer to
-Chimezie's tutorial already does it so well. I'll focus on
+adapting it to Strapi's specific use case, and also adding the following
+features:
 
 - Email confirmation for registration
 - Password reset
 - Token expiration strategy
 
-Strapi exposes the endpoints required
+I won't go into detailed explanation at every step. Instead, I'll focus on
+Strapi and the added features/fucntionality.
+
+For everything else, I recommend you refer to Chimezie's tutorial already does
+it so well.
 
 ## Pre-requisites
 
@@ -33,23 +38,23 @@ To follow this tutorial, make sure you have Node.js installed:
 
 Although not required, a basic knowledge of Strapi and Nuxt.js is recommended.
 
-> Disclaimer: this tutorial was written based on Strapi 3.0.1 (stable release) and
-> Nuxt.js 2.12.2. It should work on different versions too, but you may need to
-> adapt it here and there.
+> Disclaimer: this tutorial was written based on Strapi 3.0.1 (stable release)
+> and Nuxt.js 2.12.2. It should work on different versions too, but you may need
+> to make some adaptations it here and there.
 
 Let's get started!
 
 ## Install Strapi
 
-First things first, we begin by creating a local Strapi project:
+First things first, we begin by creating a Strapi project:
 
 ```shell
 npx create-strapi-app strapi-users --quickstart
 ```
 
-We've used the `--quickstart` flag that
-installs Strapi with the default settings. It also tells Strapi to use SQLite
-for the database and automatically run our application:
+We've used the `--quickstart` flag that installs Strapi with the default
+settings. It also tells Strapi to use SQLite for the database and automatically
+run our application:
 
 For practicality we'll be using but the steps in this guide also apply if a
 different database engine.
@@ -76,8 +81,8 @@ to localhost:1337/admin."
 By default, the user registration process in Strapi does not include the email
 confirmation step.
 
-To enable it, go to Roles & Permissions (from the left sidebar of the Admin
-dashboard, under Plugins). Click the Advanced Settings tab, enable the email
+To enable it, go to **Roles & Permissions** (from the left sidebar of the Admin
+dashboard, under **Plugins**). Click the Advanced Settings tab, enable the email
 confirmation option and save:
 
 ![Enable email confirmation Strapi](./strapi-nuxt-enable-email-confirmation.png)
@@ -103,7 +108,7 @@ cd strapi-users
 npm install strapi-provider-email-console
 ```
 
-Once the installation is done, you will need to add the provider in
+Once the installation is done, you'll need to add the provider in
 `./config/plugins.js`:
 
 ```javascript
@@ -114,12 +119,16 @@ module.exports = ({ env }) => ({
 });
 ```
 
-"To start your Strapi application you will have to run the following command in
-your application folder:"
-To start the Strapi gallery application, type npm run develop from this folder.
+Since we've used `--quickstart` the first time we ran our Strapi app, before
+running it in development mode we need to install its dependencies:
 
 ```shell
 npm install
+```
+
+Once that's done, start the Strapi app in development mode with the command:
+
+```shell
 npm run develop
 ```
 
