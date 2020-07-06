@@ -6,7 +6,7 @@ and in Nuxt.js app.
 We are going to build two projects:
 
 - Backend: Strapi app to store and manage users
-- Frontend: Nuxt app that will access Strapi's API for authentication purposes
+- Frontend: Nuxt app that will use Strapi's API for authentication purposes
 
 We'll be relying on Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is the
 official zero-boilerplate authentication module for Nuxt.js.
@@ -24,7 +24,7 @@ features:
 - Token expiration strategy
 
 I won't go into detailed explanation at every step. Instead, I'll focus on
-Strapi and the added features/fucntionality.
+Strapi and the added features/functionality.
 
 For everything else, I recommend you refer to Chimezie's tutorial already does
 it so well.
@@ -52,29 +52,25 @@ First things first, we begin by creating a Strapi project:
 npx create-strapi-app strapi-users --quickstart
 ```
 
-We've used the `--quickstart` flag that installs Strapi with the default
-settings. It also tells Strapi to use SQLite for the database and automatically
-run our application:
+We've used the `--quickstart` flag that installs Strapi with default settings.
+It also tells Strapi to use SQLite as the database engine and automatically run
+our application:
 
-For practicality we'll be using but the steps in this guide also apply if a
-different database engine.
+> In our installation, we used the default database, SQLite, because it doesn’t
+> require a dedicated database server. Instead, the database is just a single
+> file. For practicability, we'll be using it in this tutorial, but the steps in
+> this guide also apply to different database engines.
 
-"In our installation we used the default database, SQLite, because it doesn’t
-require to run a dedicated database server, but instead the actual database is
-just that one file."
+After the installation, Strapi will automatically launch in your browser, asking
+you to create an administrator account.
 
-Once the download and installation are finished,
-automatically launched Strapi in your browser create Admin.
+To finish the setup and secure your app, go ahead and create the root admin
+user, by entering the necessary information below:
 
-To finish setup and secure your app, please create the first user (root admin)
-by entering the necessary information below.
+PRINTSCREEN
 
-"After the installation the application will start automatically"
-"Strapi will start, a browser window will open automatically and ask you to make
-an administrator account."
-
-"From now on, when you want to visit the Strapi admin interface, you can browse
-to localhost:1337/admin."
+From now on, when you want to access Strapi's local Admin interface, you can
+visit [http://localhost:1337/admin](http://localhost:1337/admin).
 
 ## Enable email confirmation
 
