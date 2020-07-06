@@ -11,6 +11,8 @@ We are going to build two projects:
 We'll be relying on Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is the
 official zero-boilerplate authentication module for Nuxt.js.
 
+JWT token username password
+
 We will also be implementing some basic authorization features, such as
 restricting certain pages to only logged in users.
 
@@ -130,28 +132,28 @@ npm run develop
 
 ## Create a Nuxt app
 
-Now, let's change gears and focus on the frontend app. It will be a Nuxt.js
-isomorphic application (server-side rendering + client-side navigation).
+Now, let's change gears and focus on the frontend app. It will be a Universal
+SSR Nuxt.js app.
 
-To get started quickly, we'll initialize the project using Nuxt's scaffolding
-tool:
+To get started quickly, we'll create the project using Nuxt's scaffolding tool:
 
 ```shell
 npx create-nuxt-app nuxt-auth
 ```
 
-Go through the guide and make sure to select the following options:
+Go through the guide and make sure the following options are selected:
 
 - axios and dotenv in the **Nuxt.js modules** step
 - Bulma CSS in the **UI framework** step, which we'll use to style our app
 
 ![Create a Nuxt app](./create-nuxt-app-options.png)
 
-"Our application also has some dynamic configuration based on the environment. We
-will put this configuration into the .env file."
+Strapi's API URL will vary depending on the environment. So, we want to have it
+loaded dynamically from an environment variable.
+
 Once the tool finishes creating the app, we're going to edit the `.env` file in
-the project's root directory, adding a new environment variable pointing to the
-URL of the Strapi app that's running:
+the project's root directory, and add a new environment variable that points to
+the URL of the Strapi app that's running:
 
 ```
 API_AUTH_URL=http://localhost:1337
@@ -179,7 +181,7 @@ modules: [
 ],
 ```
 
-At the top of `nuxt.config.js` add also the following code that loads the
+At the top of `nuxt.config.js`, add also the following code to load the
 environment variables:
 
 ```javascript
@@ -187,7 +189,8 @@ require("dotenv").config();
 ```
 
 One last step we need to do in this file. Configure the base URL that axios will
-use when making API requests (which is the env variable we've added previously):
+use when making API requests (which is the environment variable we've added
+previously):
 
 ```javascript
 axios: {
@@ -197,14 +200,11 @@ axios: {
 
 ## Configure Nuxt Auth
 
-"Then we define the authentication endpoints for the local strategy corresponding
-to those on our API."
-
 The Auth module uses Vuex's state management to store the user authentication
 status and user info.
 
-Let's enable the Vuex store by creating an `index.js` file inside the `store`
-directory with the store getters:
+Enable the Vuex store by creating a `index.js` file inside the `store` directory
+with the store getters:
 
 ```javascript
 export const getters = {
@@ -218,8 +218,11 @@ export const getters = {
 };
 ```
 
-Now, we are ready to configure the Auth module. Paste the code below into
-`nuxt.config.js`:
+Now, we are ready to configure the Auth module. This is done by specifying the
+authentication endpoints for the local strategy with Strapi's authentication
+endpoints. The local strategy is based on username and password authentication.
+
+Paste the code below into `nuxt.config.js`:
 
 ```javascript
 /*
@@ -247,23 +250,17 @@ auth: {
 },
 ```
 
-We've configured two authentication endpoints:
+We've configured two endpoints:
 
-- `login`: to authenticate the user On successful authentication, the token will be available
-  in the response as a token object inside a data object, hence why we set
-  propertyName to data.token
-- `user`: Similarly, the response from the /me endpoint will
-  be inside a data object
+- `login`: authenticates the user. On successful authentication, the JWT token
+  will be available in the `jwt` property of the response object.
+- `user`: retrieves the authenticated user's info. If the user is authenticated,
+  the JWT token will be sent in the request, allowing Strapi to identify the
+  user.
 
-We've also disabled the `logout` endpoint, since logging out a user only happens
-locally and doesn't required any request to Strapi's API. We’ll just remove the
-token from local storage when a user logs out."
-
-local: username and password authentication
-
-propertyName can be used to specify which field of the response JSON to be used
-for value. It can be false to directly use API response or being more
-complicated like auth.user.
+We've also disabled the `logout` endpoint, since logging out a user is only done
+locally, and doesn't require any request to Strapi's API. The token is simply
+removed the from the local storage when the user logs out.
 
 ## Navbar Component
 
