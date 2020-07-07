@@ -411,7 +411,7 @@ Let’s create a Notification component to give feedback to the user.
 If everything goes as expected it should display a success message. Otherwise,
 an error message should be displayed.
 
-Create a `./components/Notification.vue` file and paste into it the code below:
+Create a file `./components/Notification.vue` and paste into it the code below:
 
 ```vue
 <template>
@@ -440,7 +440,7 @@ export default {
 
 ## Register
 
-Create a `./pages/register.vue` file and paste into it the code below:
+Create a file `./pages/register.vue` and paste into it the code below:
 
 ```vue
 <template>
@@ -560,25 +560,24 @@ npm run dev
 Navigate to [http://localhost:3000/register](http://localhost:3000/register) and
 register a user.
 
-If the registration was successful, a success message is displayed, requesting
-that the user completes the registration process by clicking the confirmation
-link in sent email:
+If the registration was successful, a success message is displayed by the
+Notification component, requesting that the user completes the registration
+process by clicking the confirmation link in sent email:
 
 ![Strapi Register Success](./strapi-nuxt-register-success.png)
 
 Switch to the console where Strapi is running and confirm that you see the
-email:
+confirmation email:
 
 ![Strapi Register Email Console](./strapi-nuxt-register-email-console.png)
-
-This will change confirm the user.
-
-PRINTSCREEN
 
 Copy the link and access it in your browser. This action completes the
 registration of the user.
 
-The a link which will redirect the user back to our app.
+add http://localhost:1337/
+
+"The a link which will redirect the user back to our app."
+redirects to http://localhost:1337/admin/auth/login
 
 If an error occurs, the error message is displayed by the Notification component
 we've created previously:
@@ -587,7 +586,7 @@ we've created previously:
 
 ## Login
 
-Create a `./pages/login.vue` file and paste into it the code below:
+Create a file `./pages/login.vue` and paste into it the code below:
 
 ```vue
 <template>
@@ -677,10 +676,13 @@ export default {
 
 ## Logout
 
-`Navbar.vue`
-We've also added the `logout` method that's triggered "of the Auth module, which
-deletes the JWT token from the local storage and redirects the user to the
-homepage.
+Let's now add the `logout` method that's triggered when the user clicks the
+**Logout** Navbar link.
+
+This method call the Auth module `logout`, which in turn deletes the JWT token
+from the local storage and redirects the user to the homepage.
+
+Edit `./components/Navbar.vue` and add the following code under `mounted()`:
 
 ```javascript
 methods: {
@@ -694,7 +696,7 @@ methods: {
 
 Time for the user profile page.
 
-Create a new `/pages/profile.vue` file with the following code:
+Create a file `./pages/profile.vue` with the following code:
 
 ```vue
 <template>
@@ -727,12 +729,14 @@ export default {
 </script>
 ```
 
-The `auth` middleware guarantees that only logged in users will be able to
-access the page.
+The `auth` middleware guarantees that only logged in users can access this page.
 
-## Restricting Register and Login for logged in user
+## Guest middleware
 
-create file `middleware/guest.js`:
+If the user is logged in, it probably makes sense to block the access to the
+register and login pages.
+
+Create a file `./middleware/guest.js`:
 
 ```javascript
 export default function ({ store, redirect }) {
@@ -742,7 +746,7 @@ export default function ({ store, redirect }) {
 }
 ```
 
-`login.vue` and `register.vue`:
+Define the new middleware in `./pages/register.vue` and `./pages/login.vue`:
 
 ```javascript
 export default {
@@ -752,8 +756,9 @@ export default {
 
 ## Password Reset
 
-user forgets password
-add a link to the forgot password page in `login.vue`:
+Let's now implement a password reset mechanism.
+
+Add a link to the forgot password page in `./pages/login.vue`:
 
 ```html
 <p>
@@ -761,9 +766,75 @@ add a link to the forgot password page in `login.vue`:
 </p>
 ```
 
-PRINTSCREEN
+Create a file `./pages/forgot-password.vue`:
 
-Now, lets create the new page `forgot-password.vue`:
+```vue
+<template>
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-4 is-offset-4">
+          <h2 class="title has-text-centered">Forgot Password</h2>
+
+          <Notification v-if="success" type="success" :message="success" />
+          <Notification v-if="error" type="danger" :message="error" />
+
+          <form v-if="!success" method="post" @submit.prevent="forgotPassword">
+            <div class="field">
+              <label class="label">Email</label>
+              <div class="control">
+                <input
+                  v-model="email"
+                  type="email"
+                  class="input"
+                  name="email"
+                />
+              </div>
+            </div>
+            <div class="control">
+              <button type="submit" class="button is-dark">
+                Email me a reset link
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script>
+import Notification from "~/components/Notification";
+
+export default {
+  middleware: "guest",
+  components: {
+    Notification,
+  },
+  data() {
+    return {
+      email: "",
+      success: null,
+      error: null,
+    };
+  },
+  methods: {
+    async forgotPassword() {
+      try {
+        await this.$axios.post("auth/forgot-password", {
+          email: this.email,
+        });
+        this.error = null;
+        this.success = `A reset password link has been sent to your email account. \
+        Please click on the link to complete the password reset.`;
+      } catch (e) {
+        this.error = e.response.data.message[0].messages[0].message;
+      }
+    },
+  },
+};
+</script>
+```
 
 "This action sends an email to a user with the link to your reset password page.
 This link contains a URL param code which is required to reset user password."
@@ -784,7 +855,7 @@ navigate to the Advanced Settings tab
 
 PRINTSCREEN
 
-Create a `./pages/reset-password.vue` file and paste the following code into it:
+Create a file `./pages/reset-password.vue` and paste the following code into it:
 
 This action will reset the user password.
 
@@ -810,7 +881,7 @@ Unauthorized error.
 once we get a 401 unauthorized error we need
 to redirect the user to the login page.
 
-create a new file `plugins/axios.js`:
+Create a file `./plugins/axios.js`:
 
 ```javascript
 export default function ({ $axios, redirect }) {
