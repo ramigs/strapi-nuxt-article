@@ -758,14 +758,6 @@ export default {
 
 Let's now implement a password reset mechanism.
 
-Add a link to the forgot password page in `./pages/login.vue`:
-
-```html
-<p>
-  <nuxt-link to="/forgot-password">Forgot Password?</nuxt-link>
-</p>
-```
-
 Create a file `./pages/forgot-password.vue`:
 
 ```vue
