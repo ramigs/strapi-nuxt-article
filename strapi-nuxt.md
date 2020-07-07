@@ -406,18 +406,16 @@ PRINTSCREEN
 
 ## Notification Component
 
-Before we test the user registration, let’s create a Notification component so
-we can get some feedback in the browser.
+Let’s create a Notification component to give feedback to the user.
 
 If everything goes as expected it should display a success message. Otherwise,
 an error message should be displayed.
 
-Create a new `./components/Notification.vue` file and paste in it the code
-below:
+Create a `./components/Notification.vue` file and paste into it the code below:
 
 ```vue
 <template>
-  <div class="notification is-danger">
+  <div :class="`is-${type}`" class="notification">
     {{ message }}
   </div>
 </template>
@@ -425,7 +423,17 @@ below:
 <script>
 export default {
   name: "Notification",
-  props: ["message"],
+  props: {
+    type: {
+      type: String,
+      default: "success",
+      validator: (val) => ["danger", "success"].includes(val),
+    },
+    message: {
+      type: String,
+      default: "",
+    },
+  },
 };
 </script>
 ```
