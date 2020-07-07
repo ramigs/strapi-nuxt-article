@@ -569,6 +569,8 @@ link in sent email:
 Switch to the console where Strapi is running and confirm that you see the
 email:
 
+![Strapi Register Email Console](./strapi-nuxt-register-email-console.png)
+
 This will change confirm the user.
 
 PRINTSCREEN
