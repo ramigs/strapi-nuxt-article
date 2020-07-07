@@ -564,7 +564,7 @@ If the registration was successful, a success message is displayed, requesting
 that the user completes the registration process by clicking the confirmation
 link in sent email:
 
-PRINTSCREEN
+![Strapi Register Success](./strapi-nuxt-register-success.png)
 
 Switch to the console where Strapi is running and confirm that you see the
 email:
