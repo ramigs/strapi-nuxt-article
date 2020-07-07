@@ -440,7 +440,7 @@ export default {
 
 ## Register
 
-Inside the pages directory, create a new register.vue file and paste the code below in it:
+Create a `./pages/register.vue` file and paste into it the code below:
 
 ```vue
 <template>
@@ -544,36 +544,48 @@ export default {
 </script>
 ```
 
-"This contains a form with three fields: username, email, and password. Each
-field is bound to a corresponding data on the component. When the form is
-submitted, a register method will be called. Using the Axios module, we make a
-post request to the /register endpoint, passing along the user data.
+Before hitting Strapi's register endpoint, we make sure no token will be added
+as a request header.
 
-If the registration was successful, we display a success message, requesting
+### Test Register
+
+We're now ready to test the register feature.
+
+Open a new terminal and run the Nuxt app in development mode:
+
+```shell
+npm run dev
+```
+
+Navigate to [http://localhost:3000/register](http://localhost:3000/register) and
+register a user.
+
+If the registration was successful, a success message is displayed, requesting
 that the user completes the registration process by clicking the confirmation
 link in sent email:
 
-The user simply has to check a confirmation email they received when they signed
-up. Within that email, there is a link which will redirect you back to your app.
+PRINTSCREEN
+
+Switch to the console where Strapi is running and confirm that you see the
+email:
+
+This will change confirm the user.
 
 PRINTSCREEN
+
+Copy the link and access it in your browser. This action completes the
+registration of the user.
+
+The a link which will redirect the user back to our app.
 
 If an error occurs, the error message is displayed by the Notification component
 we've created previously:
 
-PRINTSCREEN
-
-### Confirm Email
-
-Switch to console where Strapi is running and copy the link to the browser and
-visit.
-
-This will change confirm the user.
+![Strapi Register Error](./strapi-nuxt-register-error.png)
 
 ## Login
 
-"Now let’s allow returning users ability to log in. Create a new login.vue file
-inside the pages directory and paste the code below in it:"
+Create a `./pages/login.vue` file and paste into it the code below:
 
 ```vue
 <template>
@@ -660,14 +672,6 @@ export default {
 };
 </script>
 ```
-
-"This is quite similar to the register page. The form contains two fields: email
-and password. When the form is submitted, a login method will be called. Using
-the Auth module loginWith() and passing along the user data, we log the user in.
-If the authentication was successful, we redirect the user to the homepage.
-Otherwise set error to the error message gotten from the API response. Again, we
-are using the Notification component from earlier on to display the error
-message."
 
 ## Logout
 
@@ -795,9 +799,13 @@ PRINTSCREEN
 
 ## Token Expiration
 
-"Great! We have now done a lot, but something is still missing because the"
+Awesome! We've done a lot, but there's something still missing before we wrap
+up.
 
-One last thing before we wrap up. once we get a 401 unauthorized error we need
+If the JWT token expires, subsequent requests to Strapi will return a 401
+Unauthorized error.
+
+once we get a 401 unauthorized error we need
 to redirect the user to the login page.
 
 create a new file `plugins/axios.js`:
@@ -819,9 +827,8 @@ plugins: ['~plugins/axios'],
 
 ## Conclusion
 
-motivated me to consolidate all my findings and write this article. Hope it
-helps!
-"We hope you find this project useful for learning testing and Cypress."
+Hopefully you've found this tutorial helpful for implementing Strapi
+authentication in your Nuxt app :)
 
 https://youtu.be/0hAmccuaK5Q
 https://www.npmjs.com/package/strapi-provider-email-console
