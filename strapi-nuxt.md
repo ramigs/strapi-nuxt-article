@@ -828,24 +828,24 @@ export default {
 </script>
 ```
 
-"This action sends an email to a user with the link to your reset password page.
-This link contains a URL param code which is required to reset user password."
+The method `forgotPassword` sends a POST request to Strapi's forgotten password
+endpoint. If the email address exists in Strapi's user database, an email is
+sent with a link to a reset password page in the frontend app.
 
-"If account exists, an email will be sent with further instructions"
+To configure it, from the left sidebar of the Admin dashboard, click **Roles &
+Permissions** . Select the **Advanced Settings** tab, and in the "Reset password
+page" input paste `http://localhost:3000/reset-password` and save:
+
+![Strapi Reset Password Page Config](./strapi-reset-password-page-config.png)
+
+This link
+contains a URL parameter with the code that's required to successfully reset the
+user password.
+
 By not promising the user that an email will be sent and not disclosing whether
 the email/username even exists in the database, we 1) encourage them to double
 check their credentials (in case they don’t get the link) and 2) prevent
 phishing attacks.
-
-This action will send an email to the user with a link containing the required
-code for the reset password. must link to your reset password form in your
-frontend application.
-
-To configure it you will have to go in the Roles & Permissions settings and
-navigate to the Advanced Settings tab
-`http://localhost:3000/reset-password`:
-
-PRINTSCREEN
 
 Create a file `./pages/reset-password.vue` and paste the following code into it:
 
@@ -894,6 +894,11 @@ plugins: ['~plugins/axios'],
 
 Hopefully you've found this tutorial helpful for implementing Strapi
 authentication in your Nuxt app :)
+
+The source code for both apps can be found on GitHub:
+
+- [nuxt-auth](https://github.com/ramigs/nuxt-auth)
+- [strapi-users](ttps://github.com/ramigs/strapi-users)
 
 https://youtu.be/0hAmccuaK5Q
 https://www.npmjs.com/package/strapi-provider-email-console
