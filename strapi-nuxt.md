@@ -961,7 +961,7 @@ and save:
 
 ### Test Reset Password
 
-Visit `http://localhost:3000/forgot-password` in your browser, fill the "Email"
+Visit `http://localhost:3000/forgot-password` in your browser, fill-in the "Email"
 input with one that has been registered before and click **Email me a reset
 link**.
 
@@ -972,7 +972,14 @@ is there:
 
 ![Strapi Reset Password Email Console](./strapi-nuxt-reset-password-email-console.png)
 
-This action will reset the user password.
+Copy the entire link and access it in your browser:
+
+![Strapi Reset Password Form](./strapi-nuxt-reset-password-form.png)
+
+Fill-in the form and click "Reset Password". This action will reset the user
+password:
+
+![Strapi Reset Password Success](./strapi-nuxt-reset-password-success.png)
 
 ## Token Expiration
 
