@@ -147,7 +147,7 @@ Go through the guide and make sure the following options are selected:
 - axios and dotenv in the **Nuxt.js modules** step
 - Bulma CSS in the **UI framework** step, which we'll use to style our app
 
-![Create a Nuxt app](./create-nuxt-app-options.png)
+![Create a Nuxt app](./strapi-nuxt-create-nuxt-app-options.png)
 
 Strapi's API URL will vary depending on the environment. So, we want to have it
 loaded dynamically from an environment variable.
@@ -826,10 +826,11 @@ export default {
 </script>
 ```
 
-> By not promising the user that an email will be sent and not disclosing
-> whether the email/username even exists in the database, we 1) encourage them
-> to double check their credentials (in case they don’t get the link) and 2)
-> prevent phishing attacks.
+> In our implementation we're disclosing whether the email is registered or not.
+> The reason is to show that Strapi gives us that information. However, for
+> applications with greater security requirements, we could also just display
+> the success message, whether Strapi responds with an error or not - helping
+> the prevention of phishing attacks.
 
 ![Nuxt Reset Password Page](./strapi-nuxt-forgot-password-form.png)
 
@@ -843,7 +844,7 @@ To specify this link, from the left sidebar of the Admin dashboard, click
 `http://localhost:3000/reset-password` in the "Reset password page" input, and
 save:
 
-![Strapi Reset Password Page Config](./strapi-reset-password-page-config.png)
+![Strapi Reset Password Page Config](./strapi-nuxt-reset-password-page-config.png)
 
 Strapi will attach to it a URL parameter with the code that's required to
 successfully reset the user password.
@@ -957,7 +958,7 @@ Permissions**. Click **Public** and under **Permissions** expand the
 **USERS-PERMISSIONS** plugin. Under **Auth** check the option "resetpassword"
 and save:
 
-![Strapi Reset Password](./strapi-reset-password.png)
+![Strapi Reset Password](./strapi-nuxt-reset-password.png)
 
 ### Test Reset Password
 
@@ -1018,6 +1019,3 @@ The source code for both projects can be found on GitHub:
 
 - [nuxt-auth](https://github.com/ramigs/nuxt-auth)
 - [strapi-users](https://github.com/ramigs/strapi-users)
-
-https://youtu.be/0hAmccuaK5Q
-https://www.npmjs.com/package/strapi-provider-email-console
