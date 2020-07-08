@@ -12,13 +12,15 @@ We'll be relying on Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is the
 official zero-boilerplate authentication module for Nuxt.js.
 
 JWT token username password
+The local
+strategy is based on username and password authentication.
 
 We will also be implementing some basic authorization features, such as
-restricting certain pages to only logged in users.
+restricting certain pages to only logged in/out users.
 
-This guide builds on top of Chimezie Enyinnaya's excellent
-[work](https://www.digitalocean.com/community/tutorials/implementing-authentication-in-nuxtjs-app),
-adapting it to Strapi's specific use case, and also adding the following
+This guide builds on top of Chimezie Enyinnaya's [awesome
+work](https://www.digitalocean.com/community/tutorials/implementing-authentication-in-nuxtjs-app),
+adapting it to Strapi's specific use case, with the addition of the following
 features:
 
 - Email confirmation for registration
@@ -26,10 +28,8 @@ features:
 - Token expiration strategy
 
 I won't go into detailed explanation at every step. Instead, I'll focus on
-Strapi and the added features/functionality.
-
-For everything else, I recommend you refer to Chimezie's tutorial already does
-it so well.
+Strapi and the new functionality. For everything else, I recommend you refer to
+Chimezie's tutorial and the Auth Module documentation.
 
 ## Pre-requisites
 
@@ -38,12 +38,12 @@ To follow this tutorial, make sure you have Node.js installed:
 - Node.js 12.x
 - npm 6.x
 
-Although not required, a basic knowledge of Strapi, Nuxt.js, and JWT principles
-is recommended.
+Although not required, a basic knowledge of Strapi, Nuxt.js, and JWT
+fundamentals is recommended.
 
 > Disclaimer: this tutorial was written based on Strapi 3.0.1 (stable release)
 > and Nuxt.js 2.12.2. It should work on different versions too, but you may need
-> to make some adaptations it here and there.
+> to make some adaptations here and there.
 
 Let's get started!
 
@@ -57,18 +57,18 @@ npx create-strapi-app strapi-users --quickstart
 
 We've used the `--quickstart` flag that installs Strapi with default settings.
 It also tells Strapi to use SQLite as the database engine and automatically run
-our application:
+our application.
 
 > In our installation, we used the default database, SQLite, because it doesn’t
 > require a dedicated database server. Instead, the database is just a single
 > file. For the sake of convenience, we'll be using it in this tutorial, but the
 > steps in this guide also apply to different database engines.
 
-After the installation, Strapi will automatically launch in your browser, asking
-you to create an administrator account.
+Once the installation is done, Strapi will automatically be launched in your
+browser, asking you to create an administrator account.
 
-To finish the setup and secure your app, go ahead and create the root admin
-user, by filling-in the necessary information:
+To finish the setup and secure your app, go ahead and create a root/admin user,
+by filling-in the necessary information:
 
 ![Strapi Admin](./strapi-nuxt-admin.png)
 
@@ -89,18 +89,19 @@ confirmation" option and save:
 ## Email console provider
 
 Thanks to Strapi's Email plugin, we can have a Strapi instance send emails from
-our server's local email system or externals providers (e.g., SendGrid).
+our server's local email system or from an external provider (e.g., SendGrid).
 
 Email setup and configuration is not within the scope of this article. We just
 want to make sure that the emails are being fired when expected and inspect
 their content.
 
 For that, we're going to use
-[strapi-provider-email-console](https://www.npmjs.com/package/strapi-provider-email-console)
-for development, that simply outputs the emails to the console.
+[strapi-provider-email-console](https://www.npmjs.com/package/strapi-provider-email-console),
+a Strapi email mock provider used in development, that just outputs the emails
+to the console.
 
-So, let's install the email provider module. Stop the Strapi app that's running
-and install the new email provider:
+Stop the Strapi app that's running, navigate to the project's root directory,
+and install the email mock provider:
 
 ```shell
 cd strapi-users
@@ -119,7 +120,7 @@ module.exports = ({ env }) => ({
 ```
 
 Since we've used `--quickstart` the first time we ran our Strapi app, before
-running it in development mode we need to install its dependencies:
+running it in development mode, we need to install the dependencies:
 
 ```shell
 npm install
@@ -133,16 +134,17 @@ npm run develop
 
 ## Create a Nuxt app
 
-Now, let's change gears and focus on the frontend app. It will be a Universal
-SSR Nuxt.js app.
+Now, let's change gears and focus on the frontend app. It will be a Server-Side
+Rendered "Universal" Nuxt.js app.
 
-To get started quickly, we'll create the project using Nuxt's scaffolding tool:
+To get started quickly, open a new terminal and create the project using Nuxt's
+scaffolding tool:
 
 ```shell
 npx create-nuxt-app nuxt-auth
 ```
 
-Go through the guide and make sure the following options are selected:
+Go through the guide and make sure to select following options:
 
 - axios and dotenv in the **Nuxt.js modules** step
 - Bulma CSS in the **UI framework** step, which we'll use to style our app
@@ -150,11 +152,11 @@ Go through the guide and make sure the following options are selected:
 ![Create a Nuxt app](./strapi-nuxt-create-nuxt-app-options.png)
 
 Strapi's API URL will vary depending on the environment. So, we want to have it
-loaded dynamically from an environment variable.
+dynamically loaded from an environment variable.
 
-Once the tool finishes creating the app, we're going to edit the `.env` file in
-the project's root directory, and add a new environment variable that points to
-the URL of the Strapi app that's running:
+Once the tool finishes creating the app, edit the `.env` file in the project's
+root directory, adding a new environment variable that points to the URL of the
+Strapi app that's running locally:
 
 ```
 API_AUTH_URL=http://localhost:1337
@@ -168,7 +170,8 @@ cd nuxt-auth
 npm install @nuxtjs/auth
 ```
 
-Once the installation is done, add the module in `nuxt.config.js`:
+Once the installation is done, add the module `@nuxtjs/auth` in
+`./nuxt.config.js`:
 
 ```javascript
 modules: [
@@ -190,8 +193,8 @@ require("dotenv").config();
 ```
 
 One last step we need to do in this file. Configure the base URL that axios will
-use when making API requests (which is the environment variable we've added
-previously):
+use when making API requests. In our case, this corresponds to the environment
+variable we've added previously:
 
 ```javascript
 axios: {
@@ -204,7 +207,7 @@ axios: {
 The Auth module uses Vuex's state management to store the user authentication
 status and user info.
 
-Enable the Vuex store by creating a `./store/index.js` file with the store
+Enable the Vuex store by creating a file `./store/index.js` with the store
 getters:
 
 ```javascript
@@ -219,11 +222,10 @@ export const getters = {
 };
 ```
 
-Now, we are ready to configure the Auth module. This is done by specifying the
-authentication endpoints for the local strategy with Strapi's authentication
-endpoints. The local strategy is based on username and password authentication.
+Now we are ready to configure the Auth module. This is done by mapping the local
+strategy endpoints with Strapi's authentication endpoints.
 
-Paste the code below into `nuxt.config.js`:
+Paste the code below into `./nuxt.config.js`:
 
 ```javascript
 /*
@@ -251,13 +253,13 @@ auth: {
 },
 ```
 
-We've configured two endpoints:
+We've set up two endpoints:
 
 - `login`: authenticates the user. On successful authentication, the JWT token
   will be available in the `jwt` property of the response object.
 - `user`: retrieves the authenticated user's info. If the user is authenticated,
-  the JWT token will be sent in the request, allowing Strapi to identify the
-  user. Since the response object is already the user info, we set
+  the JWT token will be added to the request, allowing Strapi to identify the
+  user. Since the response object is already the user info itself, we set
   `propertyName` to `false`.
 
 We've also disabled the `logout` endpoint, since logging out a user is only done
@@ -319,7 +321,7 @@ Create a file `./components/Navbar.vue` with the following code:
 </template>
 ```
 
-Let us make component functional by adding the following `<script></script>`
+Let us make the component functional by adding the following `<script></script>`
 code:
 
 ```vue
@@ -356,13 +358,15 @@ export default {
 ```
 
 We've defined the computed properties `isAuthenticated` and `loggedInUser` used
-in the component's template. These come from the previously created store
+in the component's template. These are mapped from the previously created store
 getters.
 
 The code in the `mounted` hook comes from [Bulma's Navbar
 documentation](https://bulma.io/documentation/components/navbar/). Its purpose
 is to toggle the display of the `navbar-menu` when the `navbar-burger` icon is
 clicked.
+
+> The navbar burger menu is displayed on smaller screen sizes.
 
 ## Default Layout
 
@@ -395,7 +399,7 @@ Edit `./pages/index.vue` and replace its content with the following:
 <template>
   <section class="section">
     <div class="container">
-      <h1 class="title">Nuxt Auth</h1>
+      <h1 class="title">Nuxt Strapi Auth</h1>
     </div>
   </section>
 </template>
@@ -449,7 +453,7 @@ Create a file `./pages/register.vue` and paste into it the code below:
     <div class="container">
       <div class="columns">
         <div class="column is-4 is-offset-4">
-          <h2 class="title has-text-centered">Register User</h2>
+          <h2 class="title has-text-centered">Register</h2>
 
           <Notification v-if="success" type="success" :message="success" />
           <Notification v-if="error" type="danger" :message="error" />
@@ -514,7 +518,6 @@ export default {
   components: {
     Notification,
   },
-
   data() {
     return {
       username: "",
@@ -524,9 +527,9 @@ export default {
       error: null,
     };
   },
-
   methods: {
     async register() {
+      this.error = null;
       try {
         this.$axios.setToken(false);
         await this.$axios.post("auth/local/register", {
@@ -535,7 +538,7 @@ export default {
           password: this.password,
         });
         this.success = `A confirmation link has been sent to your email account. \
-        Please click on the link to confirm your email to complete the registration process.`;
+        Please click on the link to complete the registration process.`;
       } catch (e) {
         this.error = e.response.data.message[0].messages[0].message;
       }
@@ -545,14 +548,24 @@ export default {
 </script>
 ```
 
-Before hitting Strapi's register endpoint, we make sure no token will be added
-as a request header.
+Before making the request to Strapi's register endpoint, we make sure no token
+will be added as a request header.
+
+### Redirect after confirmation
+
+Before we can test the register feature, we need to tell Strapi where to
+redirect the user after the confirmation link is accessed.
+
+To specify this link, from the left sidebar of the Admin dashboard, click
+**Roles & Permissions**. Select the **Advanced Settings** tab, paste
+`http://localhost:3000/login` in the "Redirection url" input, and save:
 
 ### Test Register
 
 We're now ready to test the register feature.
 
-Open a new terminal and run the Nuxt app in development mode:
+Open a new terminal - so that the Strapi app is still running - and run the Nuxt
+app in development mode:
 
 ```shell
 npm run dev
@@ -563,7 +576,7 @@ register a user.
 
 If the registration was successful, a success message is displayed by the
 Notification component, requesting that the user completes the registration
-process by clicking the confirmation link in sent email:
+process by clicking the confirmation link that was sent:
 
 ![Strapi Register Success](./strapi-nuxt-register-success.png)
 
