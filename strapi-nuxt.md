@@ -560,6 +560,8 @@ To specify this link, from the left sidebar of the Admin dashboard, click
 **Roles & Permissions**. Select the **Advanced Settings** tab, paste
 `http://localhost:3000/login` in the "Redirection url" input, and save:
 
+![Strapi Redirect After Confirmation](./strapi-nuxt-redirect-after-confirmation.png)
+
 ### Test Register
 
 We're now ready to test the register feature.
