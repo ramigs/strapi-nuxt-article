@@ -549,7 +549,7 @@ export default {
 ```
 
 Before making the request to Strapi's register endpoint, we make sure no token
-will be added as a request header.
+is added as a request header.
 
 ### Redirect after confirmation
 
@@ -574,7 +574,9 @@ npm run dev
 ```
 
 Navigate to [http://localhost:3000/register](http://localhost:3000/register) and
-register a user.
+register a user:
+
+![Nuxt Register Page](./strapi-nuxt-register-page.png)
 
 If the registration was successful, a success message is displayed by the
 Notification component, requesting that the user completes the registration
@@ -849,10 +851,9 @@ export default {
 
 ![Nuxt Reset Password Page](./strapi-nuxt-forgot-password-form.png)
 
-The method `forgotPassword` sends a POST request to Strapi's
-`auth/forgot-password` endpoint. If the email address exists in Strapi's user
-database, an email is sent with a link to a reset password page in the frontend
-app.
+The method `forgotPassword` sends a request to Strapi's `auth/forgot-password`
+endpoint. If the email address exists in Strapi's user database, an email is
+sent with a link to a reset password page in the frontend app.
 
 To specify this link, from the left sidebar of the Admin dashboard, click
 **Roles & Permissions**. Select the **Advanced Settings** tab, paste
