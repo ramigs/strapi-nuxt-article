@@ -1,7 +1,7 @@
 # Strapi Authentication in Nuxt.js
 
-This tutorial is a step-by-step guide on how to implement Strapi Authentication
-and in Nuxt.js app.
+This is a step-by-step guide on how to implement Strapi Authentication in a
+Nuxt.js app.
 
 We are going to build two projects:
 
@@ -38,7 +38,8 @@ To follow this tutorial, make sure you have Node.js installed:
 - Node.js 12.x
 - npm 6.x
 
-Although not required, a basic knowledge of Strapi and Nuxt.js is recommended.
+Although not required, a basic knowledge of Strapi, Nuxt.js, and JWT principles
+is recommended.
 
 > Disclaimer: this tutorial was written based on Strapi 3.0.1 (stable release)
 > and Nuxt.js 2.12.2. It should work on different versions too, but you may need
@@ -60,8 +61,8 @@ our application:
 
 > In our installation, we used the default database, SQLite, because it doesn’t
 > require a dedicated database server. Instead, the database is just a single
-> file. For practicability, we'll be using it in this tutorial, but the steps in
-> this guide also apply to different database engines.
+> file. For the sake of convenience, we'll be using it in this tutorial, but the
+> steps in this guide also apply to different database engines.
 
 After the installation, Strapi will automatically launch in your browser, asking
 you to create an administrator account.
@@ -960,6 +961,17 @@ and save:
 
 ### Test Reset Password
 
+Visit `http://localhost:3000/forgot-password` in your browser, fill the "Email"
+input with one that has been registered before and click **Email me a reset
+link**.
+
+![Strapi Reset Password Email Sent](./strapi-nuxt-reset-password-email-sent.png)
+
+Switch to the terminal where Strapi is running and confirm that the mock email
+is there:
+
+![Strapi Reset Password Email Console](./strapi-nuxt-reset-password-email-console.png)
+
 This action will reset the user password.
 
 ## Token Expiration
@@ -970,8 +982,8 @@ up.
 If the JWT token expires, subsequent requests to Strapi will return a 401
 Unauthorized error.
 
-once we get a 401 unauthorized error we need
-to redirect the user to the login page.
+To deal with this, we'll intercept error responses in `axios` and check if the
+status code is `401`. If it is, we redirect the user to the login page.
 
 Create a file `./plugins/axios.js`:
 
@@ -984,7 +996,7 @@ export default function ({ $axios, redirect }) {
 }
 ```
 
-in `nuxt.config.js` import the file we've just created:
+In `nuxt.config.js` import the plugin we've just created:
 
 ```javascript
 plugins: ['~plugins/axios'],
@@ -993,9 +1005,9 @@ plugins: ['~plugins/axios'],
 ## Conclusion
 
 Hopefully you've found this tutorial helpful for implementing Strapi
-authentication in your Nuxt app :)
+authentication in your Nuxt app!
 
-The source code for both apps can be found on GitHub:
+The source code for both projects can be found on GitHub:
 
 - [nuxt-auth](https://github.com/ramigs/nuxt-auth)
 - [strapi-users](https://github.com/ramigs/strapi-users)
