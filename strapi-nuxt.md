@@ -953,7 +953,7 @@ save:
 
 To do so, from the left sidebar of the Admin dashboard, click **Roles &
 Permissions**. Click **Public** and under **Permissions** expand the
-**USERS-PERMISSIONS** plugin. Under **Auth** check the option `resetpassword`
+**USERS-PERMISSIONS** plugin. Under **Auth** check the option "resetpassword"
 and save:
 
 ![Strapi Reset Password](./strapi-reset-password.png)
@@ -998,7 +998,7 @@ authentication in your Nuxt app :)
 The source code for both apps can be found on GitHub:
 
 - [nuxt-auth](https://github.com/ramigs/nuxt-auth)
-- [strapi-users](ttps://github.com/ramigs/strapi-users)
+- [strapi-users](https://github.com/ramigs/strapi-users)
 
 https://youtu.be/0hAmccuaK5Q
 https://www.npmjs.com/package/strapi-provider-email-console
