@@ -79,9 +79,9 @@ From now on, you can access Strapi's local Admin interface by visiting
 By default, the user registration process in Strapi does not include email
 confirmation.
 
-To enable it, go to **Roles & Permissions** from the left sidebar of the Admin
-dashboard. Click the Advanced Settings tab, enable the email confirmation option
-and save:
+To enable it, from the left sidebar of the Admin dashboard, click **Roles &
+Permissions**. Select the **Advanced Settings** tab, enable the "Enable email
+confirmation" option and save:
 
 ![Enable email confirmation Strapi](./strapi-nuxt-enable-email-confirmation.png)
 
@@ -94,9 +94,9 @@ Email setup and configuration is not within the scope of this article. We just
 want to make sure that the emails are being fired when expected and inspect
 their content.
 
-For that, we're going to use a ["fake" email
-provider](https://github.com/aperron/strapi-provider-email-console) for
-development, that simply outputs the emails to the console.
+For that, we're going to use
+[strapi-provider-email-console](https://www.npmjs.com/package/strapi-provider-email-console)
+for development, that simply outputs the emails to the console.
 
 So, let's install the email provider module. Stop the Strapi app that's running
 and install the new email provider:
@@ -825,6 +825,11 @@ export default {
 </script>
 ```
 
+> By not promising the user that an email will be sent and not disclosing
+> whether the email/username even exists in the database, we 1) encourage them
+> to double check their credentials (in case they don’t get the link) and 2)
+> prevent phishing attacks.
+
 ![Nuxt Reset Password Page](./strapi-nuxt-forgot-password-form.png)
 
 The method `forgotPassword` sends a POST request to Strapi's
@@ -832,35 +837,130 @@ The method `forgotPassword` sends a POST request to Strapi's
 database, an email is sent with a link to a reset password page in the frontend
 app.
 
-To configure it, from the left sidebar of the Admin dashboard, click **Roles &
-Permissions** . Select the **Advanced Settings** tab, and in the "Reset password
-page" input paste `http://localhost:3000/reset-password` and save:
+To specify this link, from the left sidebar of the Admin dashboard, click
+**Roles & Permissions**. Select the **Advanced Settings** tab, paste
+`http://localhost:3000/reset-password` in the "Reset password page" input, and
+save:
 
 ![Strapi Reset Password Page Config](./strapi-reset-password-page-config.png)
 
-This link
-contains a URL parameter with the code that's required to successfully reset the
-user password.
+Strapi will attach to it a URL parameter with the code that's required to
+successfully reset the user password.
 
-By not promising the user that an email will be sent and not disclosing whether
-the email/username even exists in the database, we 1) encourage them to double
-check their credentials (in case they don’t get the link) and 2) prevent
-phishing attacks.
-
+Let's now create the page that will allow the user to define a new password.
 Create a file `./pages/reset-password.vue` and paste the following code into it:
 
-This action will reset the user password.
+```vue
+<template>
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-4 is-offset-4">
+          <h2 class="title has-text-centered">Reset Password</h2>
 
-"Now that the code is ready, you have to make sure that the API consumer or user
-has the permissions to access all the necessary actions. For this, you would
-have to open up your UI Admin Panel and goto the ‘Roles & Permissions’ menu. If
-your using the API publicly, click on the role ‘Public’ and make sure all the
-actions under every plugin dropdowns of ‘Permissions’ section are checked (or
-at least all the ones relating to email’s send action)."
+          <Notification v-if="success" type="success" :message="success" />
+          <Notification v-if="error" type="danger" :message="error" />
 
-PRINTSCREEN
+          <form v-if="!success" method="post" @submit.prevent="resetPassword">
+            <div class="field">
+              <label class="label">New Password</label>
+              <div class="control">
+                <input
+                  v-model="password1"
+                  type="password"
+                  class="input"
+                  name="password"
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Confirm New Password</label>
+              <div class="control">
+                <input
+                  v-model="password2"
+                  type="password"
+                  class="input"
+                  name="password"
+                />
+              </div>
+            </div>
+            <div class="control">
+              <button type="submit" class="button is-dark">
+                Reset Password
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script>
+import Notification from "~/components/Notification";
+
+export default {
+  middleware: "guest",
+  components: {
+    Notification,
+  },
+  asyncData(context) {
+    if (!context.route.query.code) context.redirect("/forgot-password");
+    else
+      return {
+        code: context.route.query.code,
+      };
+  },
+  data() {
+    return {
+      password1: "",
+      password2: "",
+      success: null,
+      error: null,
+    };
+  },
+  methods: {
+    async resetPassword() {
+      this.error = null;
+      if (this.password1 !== this.password2) {
+        this.error = "Passwords do not match.";
+        return;
+      }
+      try {
+        await this.$axios.post("auth/reset-password", {
+          code: this.code,
+          password: this.password1,
+          passwordConfirmation: this.password2,
+        });
+        this.success =
+          "Password updated successfully. You can now use it to log in to your account.";
+      } catch (e) {
+        this.error = e.response.data.message[0].messages[0].message;
+      }
+    },
+  },
+};
+</script>
+```
+
+One more thing before we're able to test the password reset feature. We need to
+enable the Public Role permission for the `auth/reset-password` endpoint.
+
+To specify this link, from the left sidebar of the Admin dashboard, click
+**Roles & Permissions**. Select the **Advanced Settings** tab, paste
+`http://localhost:3000/reset-password` in the "Reset password page" input, and
+save:
+
+To do so, from the left sidebar of the Admin dashboard, click **Roles &
+Permissions**. Click **Public** and under **Permissions** expand the
+**USERS-PERMISSIONS** plugin. Under **Auth** check the option `resetpassword`
+and save:
 
 ![Strapi Reset Password](./strapi-reset-password.png)
+
+### Test Reset Password
+
+This action will reset the user password.
 
 ## Token Expiration
 
