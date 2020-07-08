@@ -403,7 +403,7 @@ Edit `./pages/index.vue` and replace its content with the following:
 
 This is what we have so far:
 
-PRINTSCREEN
+![Nuxt Homepage](./strapi-nuxt-homepage.png)
 
 ## Notification Component
 
