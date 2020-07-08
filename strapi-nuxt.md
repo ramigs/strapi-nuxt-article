@@ -584,23 +584,21 @@ process by clicking the confirmation link that was sent:
 
 ![Strapi Register Success](./strapi-nuxt-register-success.png)
 
-Switch to the console where Strapi is running and confirm that you see the
-confirmation email:
-
-![Strapi Register Email Console](./strapi-nuxt-register-email-console.png)
-
-Copy the link and access it in your browser. This action completes the
-registration of the user.
-
-add http://localhost:1337/
-
-"The a link which will redirect the user back to our app."
-redirects to http://localhost:1337/admin/auth/login
-
 If an error occurs, the error message is displayed by the Notification component
 we've created previously:
 
 ![Strapi Register Error](./strapi-nuxt-register-error.png)
+
+Switch to the console where Strapi is running and confirm that you see the
+email:
+
+![Strapi Register Email Console](./strapi-nuxt-register-email-console.png)
+
+Copy the confirmation link and access it in your browser. This action completes
+the registration but you'll see a "This page could not be found" error in your
+browser. That's because we haven't implemented the login page yet.
+
+Let's fix that.
 
 ## Login
 
@@ -640,15 +638,18 @@ Create a file `./pages/login.vue` and paste into it the code below:
               </div>
             </div>
             <div class="control">
-              <button type="submit" class="button is-dark is-fullwidth">
+              <button type="submit" class="button is-dark">
                 Log In
               </button>
             </div>
           </form>
-          <div class="has-text-centered" style="margin-top: 20px">
+          <div style="margin-top: 20px">
             <p>
               Don't have an account?
               <nuxt-link to="/register">Register</nuxt-link>
+            </p>
+            <p>
+              <nuxt-link to="/forgot-password">Forgot Password?</nuxt-link>
             </p>
           </div>
         </div>
@@ -664,7 +665,6 @@ export default {
   components: {
     Notification,
   },
-
   data() {
     return {
       email: "",
@@ -672,9 +672,9 @@ export default {
       error: null,
     };
   },
-
   methods: {
     async login() {
+      this.error = null;
       try {
         await this.$auth.loginWith("local", {
           data: {
@@ -748,8 +748,8 @@ The `auth` middleware guarantees that only logged in users can access this page.
 
 ## Guest middleware
 
-If the user is logged in, it probably makes sense to block the access to the
-register and login pages.
+If the user is already logged in, it's probably a good idea to block the access
+to the register and login pages.
 
 Create a file `./middleware/guest.js`:
 
