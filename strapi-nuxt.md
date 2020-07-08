@@ -68,9 +68,9 @@ After the installation, Strapi will automatically launch in your browser, asking
 you to create an administrator account.
 
 To finish the setup and secure your app, go ahead and create the root admin
-user, by entering the necessary information below:
+user, by filling-in the necessary information:
 
-PRINTSCREEN
+![Strapi Admin](./strapi-nuxt-admin.png)
 
 From now on, you can access Strapi's local Admin interface by visiting
 [http://localhost:1337/admin](http://localhost:1337/admin).
@@ -961,9 +961,9 @@ and save:
 
 ### Test Reset Password
 
-Visit `http://localhost:3000/forgot-password` in your browser, fill-in the "Email"
-input with one that has been registered before and click **Email me a reset
-link**.
+Visit `http://localhost:3000/forgot-password` in your browser, fill-in the
+"Email" input with an email that has been registered before and click **Email me
+a reset link**.
 
 ![Strapi Reset Password Email Sent](./strapi-nuxt-reset-password-email-sent.png)
 
