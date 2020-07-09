@@ -11,17 +11,17 @@ We are going to build two projects:
 We'll be relying on Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is the
 official zero-boilerplate authentication module for Nuxt.js.
 
-Strapi's authentication scheme is based on email/username and password, along
-with JWT tokens. Upon successful authentication, the response will return a JWT
-authentication token that will be added to subsequent API requests. The Auth
-Module will conveniently help us manage this workflow.
+Strapi's authentication scheme is based on email/username and password
+credentials, along with JWT tokens. Upon successful authentication, the response
+will return a JWT authentication token that will be added to subsequent API
+requests. The Auth Module will conveniently help us manage this workflow.
 
 We will also be implementing some basic authorization features, such as
 restricting certain pages to only logged in/out users.
 
 This guide builds on top of Chimezie Enyinnaya's [awesome
 work](https://www.digitalocean.com/community/tutorials/implementing-authentication-in-nuxtjs-app),
-adapting it to Strapi's specific use case, and also adding the following
+adapting it to Strapi's specific use case, and adding also the following
 features:
 
 - Email confirmation for registration
@@ -30,8 +30,9 @@ features:
 
 I won't go into detailed explanation at every step. Instead, I'll focus on
 Strapi and the new functionality. For everything else, I recommend you refer to
-Chimezie's tutorial and to the [Auth Module
-documentation](https://auth.nuxtjs.org/#getting-started).
+[Chimezie's
+tutorial](https://www.digitalocean.com/community/tutorials/implementing-authentication-in-nuxtjs-app)
+and the [Auth Module documentation](https://auth.nuxtjs.org/#getting-started).
 
 ## Pre-requisites
 
