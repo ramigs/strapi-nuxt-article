@@ -11,8 +11,10 @@ We are going to build two projects:
 We'll be relying on Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is the
 official zero-boilerplate authentication module for Nuxt.js.
 
-The local strategy is based on username and password authentication. JWT token
-username password
+Strapi's authentication scheme is based on email/username and password, along
+with JWT tokens. Upon successful authentication, the response will return a JWT
+authentication token that will be added to subsequent API requests. The Auth
+Module will conveniently help us manage this workflow.
 
 We will also be implementing some basic authorization features, such as
 restricting certain pages to only logged in/out users.
@@ -28,7 +30,8 @@ features:
 
 I won't go into detailed explanation at every step. Instead, I'll focus on
 Strapi and the new functionality. For everything else, I recommend you refer to
-Chimezie's tutorial and the Auth Module documentation.
+Chimezie's tutorial and to the [Auth Module
+documentation](https://auth.nuxtjs.org/#getting-started).
 
 ## Pre-requisites
 
@@ -787,7 +790,7 @@ This will be achieved in two steps:
 
 1. In the **Forgot Password Page**, user submits email.
 2. If the email is in Strapi's user database, user receives email with a link to
-   the **Reset Password Page** containing a reset code.
+   the **Reset Password Page** containing a reset code as a URL parameter.
 3. User clicks the link and specifies a new password.
 4. The new password is sent to Strapi, along with the reset code.
 5. The password is updated and the user can now use it to login.
