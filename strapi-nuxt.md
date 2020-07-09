@@ -100,8 +100,8 @@ their content.
 
 For that, we're going to use
 [strapi-provider-email-console](https://www.npmjs.com/package/strapi-provider-email-console),
-a Strapi email mock provider used in development, that just outputs the emails
-to the console.
+a Strapi email mock provider used in development, that instead of sending,
+outputs the emails to the console.
 
 Stop the Strapi app that's running, navigate to the project's root directory,
 and install the email mock provider:
