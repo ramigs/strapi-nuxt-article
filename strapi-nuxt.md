@@ -19,7 +19,7 @@ restricting certain pages to only logged in/out users.
 
 This guide builds on top of Chimezie Enyinnaya's [awesome
 work](https://www.digitalocean.com/community/tutorials/implementing-authentication-in-nuxtjs-app),
-adapting it to Strapi's specific use case, with the addition of the following
+adapting it to Strapi's specific use case, and also adding the following
 features:
 
 - Email confirmation for registration
@@ -785,8 +785,12 @@ Let's now implement a password reset mechanism.
 
 This will be achieved in two steps:
 
-1. Forgot Password Page - where the user submits the email
-2. Reset Password Page -
+1. In the **Forgot Password Page**, user submits email.
+2. If the email is in Strapi's user database, user receives email with a link to
+   the **Reset Password Page** containing a reset code.
+3. User clicks the link and specifies a new password.
+4. The new password is sent to Strapi, along with the reset code.
+5. The password is updated and the user can now use it to login.
 
 ### Forgot Password Page
 
