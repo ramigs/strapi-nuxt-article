@@ -717,8 +717,6 @@ methods: {
   }
 ```
 
-### Testing Logout
-
 ## User Profile
 
 Time for the user profile page.
