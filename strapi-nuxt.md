@@ -11,9 +11,8 @@ We are going to build two projects:
 We'll be relying on Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is the
 official zero-boilerplate authentication module for Nuxt.js.
 
-JWT token username password
-The local
-strategy is based on username and password authentication.
+The local strategy is based on username and password authentication. JWT token
+username password
 
 We will also be implementing some basic authorization features, such as
 restricting certain pages to only logged in/out users.
@@ -562,7 +561,7 @@ To specify this link, from the left sidebar of the Admin dashboard, click
 
 ![Strapi Redirect After Confirmation](./strapi-nuxt-redirect-after-confirmation.png)
 
-### Test Register
+### Testing Register
 
 We're now ready to test the register feature.
 
@@ -692,6 +691,17 @@ export default {
 </script>
 ```
 
+### Testing Login
+
+Navigate to [http://localhost:3000/login](http://localhost:3000/login) and login
+with a previously registered user:
+
+![Nuxt Login](./strapi-nuxt-login.png)
+
+Notice the changes in the Navbar:
+
+![Nuxt Login Navbar](./strapi-nuxt-login-navbar.png)
+
 ## Logout
 
 Let's now add the `logout` method that's triggered when the user clicks the
@@ -706,6 +716,8 @@ methods: {
     }
   }
 ```
+
+### Testing Logout
 
 ## User Profile
 
@@ -772,6 +784,13 @@ export default {
 ## Password Reset
 
 Let's now implement a password reset mechanism.
+
+This will be achieved in two steps:
+
+1. Forgot Password Page - where the user submits the email
+2. Reset Password Page -
+
+### Forgot Password Page
 
 Create a file `./pages/forgot-password.vue`:
 
@@ -864,6 +883,8 @@ save:
 
 Strapi will attach to it a URL parameter with the code that's required to
 successfully reset the user password.
+
+### Reset Password Page
 
 Let's now create the page that will allow the user to define a new password.
 Create a file `./pages/reset-password.vue` and paste the following code into it:
@@ -976,7 +997,7 @@ and save:
 
 ![Strapi Reset Password](./strapi-nuxt-reset-password.png)
 
-### Test Reset Password
+### Testing Password Reset
 
 Visit `http://localhost:3000/forgot-password` in your browser, fill-in the
 "Email" input with an email that has been registered before and click **Email me
@@ -1033,5 +1054,5 @@ authentication in your Nuxt app!
 
 The source code for both projects can be found on GitHub:
 
-- [nuxt-auth](https://github.com/ramigs/nuxt-auth)
 - [strapi-users](https://github.com/ramigs/strapi-users)
+- [nuxt-auth](https://github.com/ramigs/nuxt-auth)
