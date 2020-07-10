@@ -787,7 +787,7 @@ export default {
 
 Let's now implement a password reset mechanism.
 
-This will be achieved in two steps:
+This will be achieved with the following workflow:
 
 1. In the **Forgot Password Page**, user submits email.
 2. If the email is in Strapi's user database, user receives email with a link to
