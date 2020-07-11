@@ -565,6 +565,35 @@ To specify this link, from the left sidebar of the Admin dashboard, click
 
 ![Strapi Redirect After Confirmation](./strapi-nuxt-redirect-after-confirmation.png)
 
+### Configure Strapi's Server URL
+
+We also need to configure Strapi's public URL. This URL will be used to prefix
+the confirmation link that's sent.
+
+Create a `.env` file by copying the `.env.example` that's in the project root:
+
+```shell
+cp .env.example .env
+```
+
+Edit `.env` and add the `URL` environment variable:
+
+```
+URL=http://localhost:1337
+```
+
+Edit `./config/server.js` and add the `url` property:
+
+```javascript
+url: env("URL", "http://localhost:1337"),
+```
+
+> Note that we've set this configuration in the development environment. In
+> production, you'll probably want to have SSL, so you'll also need to install
+> and configure an upstream proxy application, such as Nginx - and [make Strapi
+> aware of
+> it](https://strapi.io/documentation/v3.x/deployment/nginx-proxy.html).
+
 ### Testing Register
 
 We're now ready to test the register feature.
