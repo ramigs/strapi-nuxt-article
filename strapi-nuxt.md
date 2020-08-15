@@ -1,15 +1,54 @@
 # Strapi Authentication in Nuxt.js
 
-This is a step-by-step guide on how to implement Strapi Authentication in a
-Nuxt.js app.
+This is a step-by-step guide on how to implement Strapi-based authentication in
+a Nuxt.js app.
 
-We are going to build two projects:
+Here's a preview of what we're setting to achieve:
+
+![Preview](./nuxt-strapi-auth-preview.gif)
+
+In essence, authentication is the process through which a website or app
+verifies the identity of its users.
+
+As the gatekeeper to an app, authentication needs to be secure and reliable.
+After all, it deals with user information, potentially the most critical data in
+an app.
+
+Implementing a secure authentication mechanism from scratch is _hard_ and can
+quickly become cumbersome. Where do you save the user data? Should you roll out
+a database and model the user content type? What about registration, login, and
+password reset?
+
+But it doesn't end there. How to securely deal with passwords? Hashing and all
+that fun stuff 😵.
+
+That's a lot to think about, when you just want to dive into the core
+functionality of the app you're developing!
+
+You could build your own authentication mechanism, but do you really _need_ or
+_want_ to? I'd say, better to rely on something that's already built and
+thoroughly tested before.
+
+[Strapi](https://strapi.io/) is an awesome open source Node.js headless CMS,
+backed by a large, [active community](https://strapi.io/community).
+
+One of the cool things about Strapi is that it provides authentication right out
+of the box, with built-in admin and user content types and API endpoints to perform the
+main authentication operations.
+
+On the frontend, we'll be using [Nuxt.js](https://nuxtjs.org/) and relying on
+Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is the official
+zero-boilerplate authentication module for Nuxt.js.
+
+So, in this article, we'll be building two projects:
 
 - Backend: Strapi app to store and manage users
 - Frontend: Nuxt app that will use Strapi's API for authentication purposes
 
-We'll be relying on Nuxt's [Auth Module](https://auth.nuxtjs.org/), which is the
-official zero-boilerplate authentication module for Nuxt.js.
+The source code for both projects can be found on GitHub:
+
+- [strapi-users](https://github.com/ramigs/strapi-users)
+- [nuxt-auth](https://github.com/ramigs/nuxt-auth)
 
 Strapi's authentication scheme is based on email/username and password
 credentials, along with JWT tokens. Upon successful authentication, the response
@@ -111,8 +150,8 @@ cd strapi-users
 npm install strapi-provider-email-console
 ```
 
-Once the installation is done, you'll need to add the provider in
-`./config/plugins.js`:
+Once the installation is done, you'll need to add in the provider. Create the
+file `./config/plugins.js` and paste the following code:
 
 ```javascript
 module.exports = ({ env }) => ({
@@ -225,8 +264,9 @@ export const getters = {
 };
 ```
 
-Now we are ready to configure the Auth module. This is done by mapping the local
-strategy endpoints with Strapi's authentication endpoints.
+Now we are ready to configure the Auth module. The default, general purpose
+authentication scheme - supporting Cookie and JWT login flows - is named
+`local`. Let's now map its endpoints with Strapi's authentication endpoints.
 
 Paste the code below into `./nuxt.config.js`:
 
@@ -570,7 +610,8 @@ To specify this link, from the left sidebar of the Admin dashboard, click
 We also need to configure Strapi's public URL. This URL will be used to prefix
 the confirmation link that's sent.
 
-Create a `.env` file by copying the `.env.example` that's in the project root:
+Inside the Strapi project root folder, create a `.env` file by copying it from
+`.env.example`:
 
 ```shell
 cp .env.example .env
@@ -1082,10 +1123,16 @@ In `nuxt.config.js` import the plugin we've just created:
 plugins: ['~plugins/axios'],
 ```
 
+Now, when the JWT expires the user will be gracefully redirected to the login page.
+
 ## Conclusion
 
 Hopefully you've found this tutorial helpful for implementing Strapi
 authentication in your Nuxt app!
+
+You should now have a fully built, ready to be deployed in production
+authentication flow, through which users can register, login, and reset their
+password.
 
 The source code for both projects can be found on GitHub:
 
